@@ -54,6 +54,35 @@ function buildHTML(questoes) {
         </div>` : ''}
         <div class="comando">${q.comando || ''}</div>
         <div class="opcoes">${opcoesHTML}</div>
+
+        <div class="gabarito-comentado">
+          <div class="gab-header">
+            <span class="gab-titulo">Gabarito Comentado</span>
+            <span class="gab-letra">Gabarito: ${q.gabarito}</span>
+          </div>
+
+          ${q.opcoes.filter(op => op.correta).map(op => `
+            <div class="gab-correta">
+              <div class="gab-badge gab-badge-ok">${op.letra}</div>
+              <div class="gab-body">
+                <div class="gab-tag-ok">âœ“ Alternativa Correta</div>
+                <div class="gab-texto">${op.explicacao || 'Esta alternativa responde diretamente ao que o comando solicita.'}</div>
+              </div>
+            </div>
+          `).join('')}
+
+          ${q.opcoes.filter(op => !op.correta).map(op => `
+            <div class="gab-distrator">
+              <div class="gab-badge gab-badge-err">${op.letra}</div>
+              <div class="gab-body">
+                <div class="gab-tag-err">âœ— Distrator</div>
+                <div class="gab-texto">${op.explicacao || 'Alternativa incorreta.'}</div>
+              </div>
+            </div>
+          `).join('')}
+
+          ${q.habilidade ? `<div class="gab-habilidade">ðŸŽ¯ ${q.habilidade}</div>` : ''}
+        </div>
       </div>
     `;
   }).join('');
@@ -109,6 +138,20 @@ function buildHTML(questoes) {
     border-radius: 0 8px 8px 0;
   }
   .fonte { font-size: 11px; color: #9090b0; text-align: right; margin-bottom: 10px; font-family: monospace; }
+  .gabarito-comentado { margin-top: 18px; border-top: 1.5px solid #e0e0f0; padding-top: 16px; }
+  .gab-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .gab-titulo { font-family: monospace; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #6c63ff; }
+  .gab-letra { font-family: monospace; font-size: 11px; font-weight: 700; background: #e8f8f0; color: #228855; padding: 3px 10px; border-radius: 5px; border: 1px solid #aaddcc; }
+  .gab-correta { display: flex; gap: 10px; padding: 12px; background: #f0faf5; border: 1.5px solid #aadecc; border-radius: 8px; margin-bottom: 8px; }
+  .gab-distrator { display: flex; gap: 10px; padding: 10px 12px; background: #fff5f7; border: 1px solid #f0c0cc; border-radius: 8px; margin-bottom: 6px; }
+  .gab-badge { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+  .gab-badge-ok { background: #43c88a; color: white; }
+  .gab-badge-err { background: #f0c0c8; color: #cc3355; }
+  .gab-body { flex: 1; }
+  .gab-tag-ok { font-size: 9px; font-family: monospace; letter-spacing: 1px; text-transform: uppercase; color: #228855; margin-bottom: 4px; font-weight: 700; }
+  .gab-tag-err { font-size: 9px; font-family: monospace; letter-spacing: 1px; text-transform: uppercase; color: #cc3355; margin-bottom: 3px; font-weight: 700; }
+  .gab-texto { font-size: 12px; color: #2a2a4a; line-height: 1.6; }
+  .gab-habilidade { margin-top: 10px; padding: 8px 12px; background: #f0efff; border: 1px solid #cccaff; border-radius: 6px; font-size: 11px; color: #5550aa; font-family: monospace; line-height: 1.5; }
   .recurso-visual { border: 1.5px dashed #c8a820; background: #fefae8; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; }
   .recurso-icone { font-size: 10px; font-family: monospace; color: #8a6800; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }
   .recurso-desc { font-size: 12px; color: #4a3800; line-height: 1.6; margin-bottom: 4px; }
