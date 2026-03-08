@@ -1,6 +1,14 @@
+export const maxDuration = 60; // Vercel max timeout em segundos
+
 export async function POST(request) {
   try {
     const body = await request.json();
+
+    // ForÃ§ar max_tokens alto para garantir que questÃµes longas nÃ£o sejam cortadas
+    const payload = {
+      ...body,
+      max_tokens: 16000,
+    };
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -9,7 +17,7 @@ export async function POST(request) {
         "x-api-key": process.env.ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();
