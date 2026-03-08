@@ -291,10 +291,10 @@ function CartaoQuestao({ q, idx, total, resp, onResp, rev, onRev }) {
           })}
         </div>
 
-        {/* AÃ§Ã£o */}
+        {/* AÃ§Ã£o â€” resposta interativa */}
         {!rev
-          ? <button className="btn-ghost" onClick={onRev} disabled={!resp} style={{ opacity:resp?1:.45, padding:"8px 18px", fontSize:"13px" }}>{resp?"Ver gabarito":"Selecione uma alternativa"}</button>
-          : <div style={{ display:"flex", alignItems:"center", gap:"10px", padding:"10px 14px", background:resp===q.gabarito?"rgba(67,232,160,.08)":"rgba(255,101,132,.08)", border:`1px solid ${resp===q.gabarito?"#43e8a0":"#ff6584"}`, borderRadius:"9px", fontSize:"13px" }}>
+          ? <button className="btn-ghost" onClick={onRev} disabled={!resp} style={{ opacity:resp?1:.45, padding:"8px 18px", fontSize:"13px" }}>{resp?"Verificar resposta":"Selecione uma alternativa"}</button>
+          : <div style={{ marginBottom:"4px", display:"flex", alignItems:"center", gap:"10px", padding:"10px 14px", background:resp===q.gabarito?"rgba(67,232,160,.08)":"rgba(255,101,132,.08)", border:`1px solid ${resp===q.gabarito?"#43e8a0":"#ff6584"}`, borderRadius:"9px", fontSize:"13px" }}>
               <span style={{ fontSize:"18px" }}>{resp===q.gabarito?"ðŸŽ¯":"ðŸ“š"}</span>
               <span>{resp===q.gabarito?"Resposta correta!":`Incorreta. Gabarito: ${q.gabarito}`}</span>
               <div style={{ marginLeft:"auto", display:"flex", flexDirection:"column", alignItems:"flex-end", gap:"2px" }}>
@@ -303,6 +303,62 @@ function CartaoQuestao({ q, idx, total, resp, onResp, rev, onRev }) {
               </div>
             </div>
         }
+
+        {/* Gabarito Comentado â€” sempre visÃ­vel */}
+        <div style={{ marginTop:"20px", borderTop:"1px solid var(--border)", paddingTop:"18px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"14px" }}>
+            <div style={{ width:"6px", height:"20px", background:"linear-gradient(180deg,#6c63ff,#43e8a0)", borderRadius:"3px" }} />
+            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:"13px", letterSpacing:"1px", textTransform:"uppercase", color:"var(--label)" }}>
+              Gabarito Comentado
+            </span>
+            <span style={{ marginLeft:"auto", fontFamily:"'DM Mono',monospace", fontSize:"11px", padding:"3px 10px", background:"rgba(67,232,160,.12)", border:"1px solid #43e8a044", borderRadius:"6px", color:"#43e8a0" }}>
+              Gabarito: {q.gabarito}
+            </span>
+          </div>
+
+          {/* Justificativa da correta */}
+          {q.opcoes.filter(op => op.correta).map(op => (
+            <div key={op.letra} style={{ display:"flex", gap:"12px", padding:"14px 16px", background:"rgba(67,232,160,.06)", border:"1.5px solid #43e8a033", borderRadius:"10px", marginBottom:"10px" }}>
+              <div style={{ flexShrink:0, width:"28px", height:"28px", borderRadius:"7px", background:"#43e8a0", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace", fontWeight:700, fontSize:"13px", color:"#0d0d12" }}>
+                {op.letra}
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:"11px", fontFamily:"'DM Mono',monospace", color:"#43e8a0", letterSpacing:"1px", textTransform:"uppercase", marginBottom:"5px" }}>
+                  âœ“ Alternativa Correta
+                </div>
+                <div style={{ fontSize:"13px", color:"#c0e8d0", lineHeight:1.7 }}>
+                  {op.explicacao || "Esta alternativa estÃ¡ correta pois responde diretamente ao que o comando solicita."}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Distratores */}
+          <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
+            {q.opcoes.filter(op => !op.correta).map(op => (
+              <div key={op.letra} style={{ display:"flex", gap:"12px", padding:"12px 16px", background:"rgba(255,101,132,.04)", border:"1px solid #ff658422", borderRadius:"10px" }}>
+                <div style={{ flexShrink:0, width:"28px", height:"28px", borderRadius:"7px", background:"rgba(255,101,132,.15)", border:"1px solid #ff658444", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Mono',monospace", fontWeight:700, fontSize:"13px", color:"#ff6584" }}>
+                  {op.letra}
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:"11px", fontFamily:"'DM Mono',monospace", color:"#ff8099", letterSpacing:"1px", textTransform:"uppercase", marginBottom:"4px" }}>
+                    âœ— Distrator
+                  </div>
+                  <div style={{ fontSize:"13px", color:"#b0a0a8", lineHeight:1.65 }}>
+                    {op.explicacao || "Alternativa incorreta."}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Habilidade */}
+          {q.habilidade && (
+            <div style={{ marginTop:"12px", padding:"10px 14px", background:"rgba(108,99,255,.07)", border:"1px solid #6c63ff33", borderRadius:"8px", fontSize:"12px", color:"var(--label)", fontFamily:"'DM Mono',monospace", lineHeight:1.6 }}>
+              ðŸŽ¯ {q.habilidade}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
