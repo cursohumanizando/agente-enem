@@ -39,13 +39,13 @@ function para(text, opts = {}) {
 function buildDOCX(questoes) {
   let body = '';
 
-  // Título
-  body += para('HUMANIZANDO · AGENTE ELABORADOR ENEM', { bold: true, size: 26, color: '6c63ff', spacing: 80 });
-  body += para('Simulado · Ciências Humanas e suas Tecnologias', { size: 20, color: '8080b0', spacing: 320 });
+  // TÃ­tulo
+  body += para('HUMANIZANDO Â· AGENTE ELABORADOR ENEM', { bold: true, size: 26, color: '6c63ff', spacing: 80 });
+  body += para('Simulado Â· CiÃªncias Humanas e suas Tecnologias', { size: 20, color: '8080b0', spacing: 320 });
 
   questoes.forEach((q, i) => {
     const hab = (q.habilidade || '').match(/H\d+/)?.[0] || '';
-    body += para(`QUESTÃO ${i + 1}  ·  ${(q.nivel || '').toUpperCase()}  ·  ${hab}`, { bold: true, size: 20, color: '6c63ff', spacing: 80 });
+    body += para(`QUESTÃƒO ${i + 1}  Â·  ${(q.nivel || '').toUpperCase()}  Â·  ${hab}`, { bold: true, size: 20, color: '6c63ff', spacing: 80 });
     if (q.tema) body += para(q.tema, { size: 17, color: '9090b0', italic: true, spacing: 120 });
     body += para(q.textoBase || '', { size: 19, color: '2a2a4a', italic: true, indent: 480, spacing: 80 });
     body += para(q.fonte || '', { size: 16, color: 'a0a0c0', indent: 480, spacing: 200 });
@@ -76,7 +76,7 @@ ${body}
 </w:body>
 </w:document>`;
 
-  // Montar o ZIP do DOCX manualmente (DOCX é um ZIP com XMLs)
+  // Montar o ZIP do DOCX manualmente (DOCX Ã© um ZIP com XMLs)
   const files = {
     '[Content_Types].xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
@@ -97,7 +97,7 @@ ${body}
   return createZip(files);
 }
 
-// Mini implementação de ZIP sem dependências externas
+// Mini implementaÃ§Ã£o de ZIP sem dependÃªncias externas
 function createZip(files) {
   const encoder = new TextEncoder();
   const parts = [];
