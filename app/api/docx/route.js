@@ -59,11 +59,29 @@ function buildDOCX(questoes) {
     (q.opcoes || []).forEach(op => {
       body += para(`${op.letra})  ${op.texto}`, { size: 19, color: '1a1a2e', indent: 280, spacing: 100 });
     });
-    body += para('', { spacing: 200 });
+    // Gabarito Comentado
+    body += para('â”€â”€â”€ GABARITO COMENTADO â”€â”€â”€', { bold: true, size: 17, color: '6c63ff', spacing: 80 });
+    body += para('Gabarito: ' + q.gabarito, { bold: true, size: 18, color: '228855', spacing: 80 });
+
+    // Alternativa correta
+    const correta = (q.opcoes || []).find(op => op.correta);
+    if (correta) {
+      body += para('âœ“ Alternativa Correta â€” ' + correta.letra, { bold: true, size: 17, color: '228855', indent: 280, spacing: 60 });
+      body += para(correta.explicacao || 'Esta alternativa responde diretamente ao comando.', { size: 17, color: '2a4a2a', italic: true, indent: 560, spacing: 100 });
+    }
+
+    // Distratores
+    body += para('âœ— Distratores:', { bold: true, size: 17, color: 'cc3355', indent: 280, spacing: 60 });
+    (q.opcoes || []).filter(op => !op.correta).forEach(op => {
+      body += para(op.letra + ')  ' + (op.explicacao || 'Alternativa incorreta.'), { size: 16, color: '664444', indent: 560, spacing: 80 });
+    });
+
+    if (q.habilidade) body += para('ðŸŽ¯ ' + q.habilidade, { size: 15, color: '5550aa', indent: 280, spacing: 60 });
+    body += para('', { spacing: 280 });
   });
 
-  // Gabarito
-  body += para('GABARITO', { bold: true, size: 22, color: '6c63ff', spacing: 120 });
+  // Gabarito resumido
+  body += para('GABARITO GERAL', { bold: true, size: 22, color: '6c63ff', spacing: 120 });
   questoes.forEach((q, i) => {
     const hab = (q.habilidade || '').match(/H\d+/)?.[0] || '';
     body += para(`${i + 1}.   ${q.gabarito}     ${hab}`, { size: 20, color: '1a1a2e', spacing: 100 });
