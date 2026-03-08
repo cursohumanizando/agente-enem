@@ -623,7 +623,31 @@ export default function App() {
   function downloadTXT(qs) {
     const lines = qs.map(q => {
       const alts = (q.opcoes||[]).map(o => o.letra + ") " + o.texto).join("\n");
-      return "QUESTÃƒO " + q.numero + "\n" + (q.textoBase||"") + "\n" + (q.fonte||"") + "\n\n" + (q.comando||"") + "\n\n" + alts + "\n\nGabarito: " + q.gabarito + "\n" + "â”€".repeat(48);
+
+      const correta = (q.opcoes||[]).find(o => o.correta);
+      const distratores = (q.opcoes||[]).filter(o => !o.correta);
+
+      const gabComentado = [
+        "â”Œâ”€ GABARITO COMENTADO " + "â”€".repeat(26) + "â”",
+        "  Gabarito: " + q.gabarito,
+        "",
+        "  âœ“ ALTERNATIVA CORRETA â€” " + (correta?.letra || q.gabarito),
+        "  " + (correta?.explicacao || "Responde diretamente ao que o comando solicita."),
+        "",
+        "  âœ— DISTRATORES:",
+        ...distratores.map(o => "  " + o.letra + ") " + (o.explicacao || "Alternativa incorreta.")),
+        "",
+        q.habilidade ? "  ðŸŽ¯ " + q.habilidade : "",
+        "â””" + "â”€".repeat(48) + "â”˜",
+      ].filter(l => l !== undefined).join("\n");
+
+      return "QUESTÃƒO " + q.numero + "\n" +
+        (q.textoBase||"") + "\n" +
+        (q.fonte||"") + "\n\n" +
+        (q.comando||"") + "\n\n" +
+        alts + "\n\n" +
+        gabComentado + "\n" +
+        "â•".repeat(48);
     });
     const txt = lines.join("\n\n");
     const b = new Blob([txt], {type:"text/plain;charset=utf-8"});
