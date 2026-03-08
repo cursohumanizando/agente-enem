@@ -155,9 +155,14 @@ ${lista}
 6. O GABARITO de cada questÃ£o DEVE ser EXATAMENTE a letra indicada na lista acima
 7. O campo "nivel" DEVE corresponder ao nÃ­vel da lista acima
 8. O campo "habilidade" deve conter o cÃ³digo oficial (ex: "H8") e seu enunciado completo
+9. RECURSOS VISUAIS â€” quando o tipo de item for "Leitura de dados / grÃ¡fico" OU quando o tema envolver dados espaciais, estatÃ­sticos ou histÃ³ricos, preencha o campo "recursoVisual" com:
+   - tipo: "mapa" | "grÃ¡fico" | "tabela" | "charge" | "fotografia" | "infogrÃ¡fico"
+   - descricao: descriÃ§Ã£o detalhada do que a imagem mostraria (ex: "Mapa do Brasil com taxa de desmatamento por estado em 2022")
+   - fonteRecurso: fonte real onde o professor pode encontrar ou gerar o recurso (ex: "INPE â€“ inpe.br/queimadas" ou "IBGE â€“ ibge.gov.br/geociencias")
+   Se nÃ£o houver recurso visual necessÃ¡rio, deixe "recursoVisual": null
 
 Responda SOMENTE com JSON vÃ¡lido, sem markdown, sem texto antes ou depois:
-{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}`;
+{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","recursoVisual":{"tipo":"mapa|grÃ¡fico|tabela|charge|fotografia|infogrÃ¡fico","descricao":"","fonteRecurso":""},"opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}`;
 }
 
 // â”€â”€â”€ CSS Global â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -271,6 +276,29 @@ function CartaoQuestao({ q, idx, total, resp, onResp, rev, onRev }) {
           {q.textoBase}
         </div>
         <div style={{ textAlign:"right", fontSize:"11px", color:"var(--muted)", fontFamily:"'DM Mono',monospace", marginBottom:"18px" }}>{q.fonte}</div>
+
+        {/* Recurso Visual */}
+        {q.recursoVisual && q.recursoVisual.descricao && (
+          <div style={{ display:"flex", gap:"12px", alignItems:"flex-start", padding:"14px 16px", background:"rgba(255,209,102,.07)", border:"1.5px dashed #ffd16688", borderRadius:"10px", marginBottom:"18px" }}>
+            <span style={{ fontSize:"22px", flexShrink:0 }}>
+              {q.recursoVisual.tipo === "mapa" ? "ðŸ—º" : q.recursoVisual.tipo === "grÃ¡fico" ? "ðŸ“Š" : q.recursoVisual.tipo === "tabela" ? "ðŸ“‹" : q.recursoVisual.tipo === "charge" ? "ðŸŽ¨" : q.recursoVisual.tipo === "fotografia" ? "ðŸ“·" : "ðŸ“Œ"}
+            </span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:"#ffd166", letterSpacing:"2px", textTransform:"uppercase", marginBottom:"4px" }}>
+                {q.recursoVisual.tipo} sugerido
+              </div>
+              <div style={{ fontSize:"13px", color:"#e0d090", lineHeight:1.6, marginBottom:"6px" }}>
+                {q.recursoVisual.descricao}
+              </div>
+              {q.recursoVisual.fonteRecurso && (
+                <div style={{ fontSize:"11px", color:"var(--muted)", fontFamily:"'DM Mono',monospace" }}>
+                  ðŸ“Ž Fonte: {q.recursoVisual.fonteRecurso}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <p style={{ fontSize:"15px", fontWeight:600, lineHeight:1.6, marginBottom:"18px", color:"var(--text)" }}>{q.comando}</p>
 
         {/* Alternativas */}
@@ -644,8 +672,9 @@ export default function App() {
         "ESTILO: " + analise.observacoesEstilo + "\n\n" +
         "DISTRIBUIÃ‡ÃƒO:\n" + lista + "\n\n" +
         "REGRAS: texto-base necessÃ¡rio, sem 'segundo o texto', alternativas paralelas (6-20 palavras), distratores distintos, fonte real com ano, gabarito exato da lista.\n\n" +
+        "RECURSO VISUAL: quando necessÃ¡rio, preencha recursoVisual com tipo, descricao e fonteRecurso (URL/publicaÃ§Ã£o real onde encontrar). Se nÃ£o houver, use null.\n\n" +
         "Responda SOMENTE JSON vÃ¡lido sem markdown:\n" +
-        '{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}';
+        '{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","recursoVisual":{"tipo":"mapa|grÃ¡fico|tabela|charge|fotografia|infogrÃ¡fico","descricao":"","fonteRecurso":""},"opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}';
     }
 
     try {
