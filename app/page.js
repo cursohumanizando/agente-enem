@@ -103,67 +103,41 @@ const EIXOS_COGNITIVOS = {
 };
 
 function buildPrompt({ disciplina, niveis, tipoItem, tema, qtd, offset = 0 }) {
+  const discArr = Array.isArray(disciplina) ? disciplina : [disciplina];
+  const tipoArr = Array.isArray(tipoItem) ? tipoItem : [tipoItem];
   const dist = buildDistribuicao(qtd, niveis);
   const letras = ["A","B","C","D","E"];
   const gabs = Array.from({ length: qtd }, (_, i) => letras[(i + offset) % 5]);
-  const lista = dist.map((n, i) => `Q${i+1}: ${n} â€” gabarito: ${gabs[i]}`).join("\n");
+  const listaDisc = dist.map((n, i) => discArr[i % discArr.length]);
+  const listaTipo = dist.map((n, i) => tipoArr[i % tipoArr.length]);
+  const lista = dist.map((n, i) => "Q"+(i+1)+": "+n+" â€” disciplina: "+listaDisc[i]+" â€” tipo: "+listaTipo[i]+" â€” gabarito: "+gabs[i]).join("\n");
+  const habTexto = discArr.map(d => d+":\n"+(HABILIDADES[d]||[]).join("\n")).join("\n\n");
 
-
-  return `VocÃª Ã© um elaborador especialista de itens no padrÃ£o ENEM, CiÃªncias Humanas e suas Tecnologias.
-
-â•â•â• ESPECIFICAÃ‡ÃƒO DO ITEM â•â•â•
-Disciplina: ${disciplina}
-Tipo de item: ${tipoItem}
-Tema/Contexto: ${tema || "livre, adequado Ã  disciplina"}
-Quantidade: ${qtd} questÃ£o(Ãµes)
-
-HABILIDADE: vocÃª deve escolher a habilidade mais adequada da Matriz de ReferÃªncia ENEM (H1â€“H30) de CiÃªncias Humanas, com base na disciplina e no tema. Escolha habilidades distintas para cada questÃ£o quando houver mais de uma.
-
-HABILIDADES DISPONÃVEIS PARA ${disciplina}:
-${(HABILIDADES[disciplina]||[]).join("\n")}
-
-â•â•â• DISTRIBUIÃ‡ÃƒO OBRIGATÃ“RIA â•â•â•
-${lista}
-
-â•â•â• CRITÃ‰RIOS COGNITIVOS POR NÃVEL â•â•â•
-ðŸŸ¢ FÃCIL â€” COMPREENSÃƒO (eixo DL/CF)
-  â€¢ O candidato identifica ou reconhece informaÃ§Ã£o explÃ­cita no texto-base
-  â€¢ Verbo do comando: evidencia / demonstra / caracteriza / tem como objetivo / ilustra
-  â€¢ Texto-base: 5â€“7 linhas, linguagem direta, 1 fonte
-  â€¢ Distratores: desvios Ã³bvios (inversÃ£o direta, generalizaÃ§Ã£o evidente)
-
-ðŸŸ¡ MÃ‰DIO â€” ANÃLISE (eixo SP/CA)
-  â€¢ O candidato relaciona dois elementos ou articula conceito ao contexto apresentado
-  â€¢ Verbo do comando: permite reconhecer / contribui para / encontra fundamento / reflete
-  â€¢ Texto-base: 7â€“10 linhas, dado ou argumento a ser interpretado
-  â€¢ Distratores: plausÃ­veis, eliminados por leitura cuidadosa
-
-ðŸ”´ DIFÃCIL â€” SÃNTESE/AVALIAÃ‡ÃƒO (eixo CA/EP)
-  â€¢ O candidato articula dois textos, avalia contradiÃ§Ã£o ou mobiliza conceito nÃ£o explÃ­cito
-  â€¢ Verbo do comando: permite inferir / revela a tensÃ£o entre / fundamenta-se na / pressupÃµe
-  â€¢ Texto-base: 10â€“12 linhas OU dois textos complementares em diÃ¡logo
-  â€¢ Distratores: sofisticados, verdadeiros em parte, eliminados sÃ³ por sÃ­ntese completa
-
-â•â•â• REGRAS OBRIGATÃ“RIAS â•â•â•
-1. Texto-base suficiente e necessÃ¡rio â€” sem ele a questÃ£o NÃƒO pode ser respondida
-2. PROIBIDO no comando: "segundo o texto" / "de acordo com o texto" / "com base no texto" / "a partir do texto"
-3. Alternativas com estrutura nominal paralela, 6â€“20 palavras cada
-4. Cada distrator usa exatamente um tipo de desvio distinto:
-   generalizaÃ§Ã£o indevida | reduÃ§Ã£o indevida | inversÃ£o de causalidade |
-   deslocamento temporal | confusÃ£o conceitual | relaÃ§Ã£o parcial
-5. Fonte real com autor e ano (ex: SANTOS, Milton. A Natureza do EspaÃ§o. 2002.)
-6. O GABARITO de cada questÃ£o DEVE ser EXATAMENTE a letra indicada na lista acima
-7. O campo "nivel" DEVE corresponder ao nÃ­vel da lista acima
-8. O campo "habilidade" deve conter o cÃ³digo oficial (ex: "H8") e seu enunciado completo
-9. RECURSOS VISUAIS â€” quando o tipo de item for "Leitura de dados / grÃ¡fico" OU quando o tema envolver dados espaciais, estatÃ­sticos ou histÃ³ricos, preencha o campo "recursoVisual" com:
-   - tipo: "mapa" | "grÃ¡fico" | "tabela" | "charge" | "fotografia" | "infogrÃ¡fico"
-   - descricao: descriÃ§Ã£o detalhada do que a imagem mostraria (ex: "Mapa do Brasil com taxa de desmatamento por estado em 2022")
-   - fonteRecurso: fonte real onde o professor pode encontrar ou gerar o recurso (ex: "INPE â€“ inpe.br/queimadas" ou "IBGE â€“ ibge.gov.br/geociencias")
-   Se nÃ£o houver recurso visual necessÃ¡rio, deixe "recursoVisual": null
-
-Responda SOMENTE com JSON vÃ¡lido, sem markdown, sem texto antes ou depois:
-{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","recursoVisual":{"tipo":"mapa|grÃ¡fico|tabela|charge|fotografia|infogrÃ¡fico","descricao":"","fonteRecurso":""},"opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}`;
+  return "VocÃª Ã© um elaborador especialista de itens no padrÃ£o ENEM, CiÃªncias Humanas e suas Tecnologias.\n\n" +
+    "â•â•â• ESPECIFICAÃ‡ÃƒO â•â•â•\n" +
+    "Disciplinas: "+discArr.join(", ")+"\n" +
+    "Tipos de item: "+tipoArr.join(", ")+"\n" +
+    "Tema/Contexto: "+(tema || "livre, adequado Ã  disciplina")+"\n" +
+    "Quantidade: "+qtd+" questÃ£o(Ãµes)\n\n" +
+    "HABILIDADES DISPONÃVEIS:\n"+habTexto+"\n\n" +
+    "â•â•â• DISTRIBUIÃ‡ÃƒO OBRIGATÃ“RIA â•â•â•\n"+lista+"\n\n" +
+    "IMPORTANTE: para cada questÃ£o, use a disciplina e o tipo especificados na linha acima.\n\n" +
+    "â•â•â• CRITÃ‰RIOS COGNITIVOS POR NÃVEL â•â•â•\n" +
+    "ðŸŸ¢ FÃCIL â€” COMPREENSÃƒO: verbo evidencia/demonstra/caracteriza, texto 5â€“7 linhas, distratores Ã³bvios.\n" +
+    "ðŸŸ¡ MÃ‰DIO â€” ANÃLISE: verbo permite reconhecer/contribui para, texto 7â€“10 linhas, distratores plausÃ­veis.\n" +
+    "ðŸ”´ DIFÃCIL â€” SÃNTESE: verbo permite inferir/revela a tensÃ£o entre, texto 10â€“12 linhas ou dois textos, distratores sofisticados.\n\n" +
+    "â•â•â• REGRAS OBRIGATÃ“RIAS â•â•â•\n" +
+    "1. Texto-base suficiente e necessÃ¡rio\n" +
+    "2. PROIBIDO: \"segundo o texto\" / \"de acordo com o texto\" / \"com base no texto\"\n" +
+    "3. Alternativas nominais paralelas, 6â€“20 palavras\n" +
+    "4. Distratores com desvios distintos: generalizaÃ§Ã£o indevida | reduÃ§Ã£o indevida | inversÃ£o de causalidade | deslocamento temporal | confusÃ£o conceitual | relaÃ§Ã£o parcial\n" +
+    "5. Fonte real com autor e ano\n" +
+    "6. Gabarito EXATAMENTE a letra indicada na lista\n" +
+    "7. Campo \"habilidade\" com cÃ³digo oficial (ex: H8) e enunciado completo\n" +
+    "8. RECURSO VISUAL: quando o tipo for \"Leitura de dados / grÃ¡fico\" ou o tema envolver dados espaciais/estatÃ­sticos, preencha recursoVisual com tipo, descricao e fonteRecurso (URL real). Caso contrÃ¡rio, use null.\n\n" +
+    'Responda SOMENTE JSON vÃ¡lido sem markdown:\n{"questoes":[{"tema":"","nivel":"FÃ¡cil|MÃ©dio|DifÃ­cil","textoBase":"","fonte":"","comando":"","recursoVisual":{"tipo":"mapa|grÃ¡fico|tabela|charge|fotografia|infogrÃ¡fico","descricao":"","fonteRecurso":""},"opcoes":[{"letra":"A","texto":"","correta":false,"explicacao":""},{"letra":"B","texto":"","correta":false,"explicacao":""},{"letra":"C","texto":"","correta":false,"explicacao":""},{"letra":"D","texto":"","correta":false,"explicacao":""},{"letra":"E","texto":"","correta":false,"explicacao":""}],"gabarito":"","habilidade":"","competencia":"","eixo":""}]}';
 }
+
 
 // â”€â”€â”€ CSS Global â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const CSS = `
@@ -352,9 +326,9 @@ export default function App() {
   // Config
   const [modo, setModo]           = useState("avulsa"); // "avulsa" | "simulado"
   const [qtdSimulado, setQtd]     = useState(10);
-  const [disciplina, setDisc]     = useState("Sociologia");
+  const [disciplinas, setDiscs]   = useState(["Sociologia"]);
   const [niveis, setNiveis]       = useState(["FÃ¡cil"]);
-  const [tipoItem, setTipo]       = useState("InterpretaÃ§Ã£o de texto");
+  const [tipos, setTipos]         = useState(["InterpretaÃ§Ã£o de texto"]);
   const [tema, setTema]           = useState("");
 
   // QuestÃµes
@@ -383,10 +357,13 @@ export default function App() {
   }, []);
 
   function toggleNivel(n) {
-    setNiveis(prev => {
-      if (prev.includes(n)) return prev.length === 1 ? prev : prev.filter(x => x !== n);
-      return [...prev, n];
-    });
+    setNiveis(prev => prev.includes(n) ? (prev.length === 1 ? prev : prev.filter(x => x !== n)) : [...prev, n]);
+  }
+  function toggleDisc(d) {
+    setDiscs(prev => prev.includes(d) ? (prev.length === 1 ? prev : prev.filter(x => x !== d)) : [...prev, d]);
+  }
+  function toggleTipo(t) {
+    setTipos(prev => prev.includes(t) ? (prev.length === 1 ? prev : prev.filter(x => x !== t)) : [...prev, t]);
   }
 
   const totalR = Object.keys(revelados).length;
@@ -618,7 +595,7 @@ export default function App() {
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
             max_tokens: 4000,
-            messages: [{ role: "user", content: buildPrompt({ disciplina, niveis, tipoItem, tema, qtd: qtdLote, offset }) }],
+            messages: [{ role: "user", content: buildPrompt({ disciplina: disciplinas, niveis, tipoItem: tipos, tema, qtd: qtdLote, offset }) }],
           }),
         });
         const data = await res.json();
@@ -627,7 +604,7 @@ export default function App() {
         const parsed = JSON.parse(txt.replace(/```json|```/g,"").trim());
         qs.push(...parsed.questoes);
       }
-      qs = qs.map((q, i) => ({ ...q, numero: i+1, area: disciplina }));
+      qs = qs.map((q, i) => ({ ...q, numero: i+1, area: q.area || disciplinas[0] }));
     } catch(e) {
       setErro("Erro ao gerar questÃµes: " + e.message);
       setLoadingMsg(""); setLoading(false); return;
@@ -936,9 +913,9 @@ export default function App() {
                 <div className="field-label">Ãrea</div>
                 <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
                   {DISCIPLINAS.map(d => {
-                    const c = COR_DISC[d]; const ativo = disciplina === d;
+                    const c = COR_DISC[d]; const ativo = disciplinas.includes(d);
                     return (
-                      <button key={d} className="chip" onClick={() => setDisc(d)}
+                      <button key={d} className="chip" onClick={() => toggleDisc(d)}
                         style={ativo ? { borderColor:c.border, background:c.bg, color:c.text } : {}}>
                         {d}
                       </button>
@@ -967,8 +944,8 @@ export default function App() {
               <div className="field-label">Tipo de Item</div>
               <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
                 {TIPOS_ITEM.map(t => (
-                  <button key={t} className="chip" onClick={() => setTipo(t)}
-                    style={tipoItem===t ? { borderColor:"var(--accent)", background:"rgba(108,99,255,.15)", color:"var(--accent)" } : {}}>
+                  <button key={t} className="chip" onClick={() => toggleTipo(t)}
+                    style={tipos.includes(t) ? { borderColor:"var(--accent)", background:"rgba(108,99,255,.15)", color:"var(--accent)" } : {}}>
                     {t}
                   </button>
                 ))}
