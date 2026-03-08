@@ -383,8 +383,37 @@ export default function App() {
     });
   }
 
-  // â”€â”€ Exportar PDF via jsPDF â”€â”€
+  // â”€â”€ Exportar PDF via servidor â”€â”€
   async function exportarPDF(qs, nomeArq) {
+    const res = await fetch("/api/pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questoes: qs }),
+    });
+    if (!res.ok) throw new Error("Falha ao gerar PDF");
+    const html = await res.text();
+    const win = window.open("", "_blank");
+    if (!win) throw new Error("Popup bloqueado â€” permita popups para este site");
+    win.document.write(html);
+    win.document.close();
+  }
+
+  // â”€â”€ Exportar DOCX via servidor â”€â”€
+  async function exportarDOCX(qs, nomeArq) {
+    const res = await fetch("/api/docx", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questoes: qs }),
+    });
+    if (!res.ok) throw new Error("Falha ao gerar Word");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = nomeArq + ".docx"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // â”€â”€ Exportar PDF via jsPDF (legado, nÃ£o chamado) â”€â”€
+  async function exportarPDF_legacy(qs, nomeArq) {
     await loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
       "jspdf"
@@ -449,155 +478,7 @@ export default function App() {
     doc.save(nomeArq + ".pdf");
   }
 
-  // â”€â”€ Exportar DOCX via docx.js â”€â”€
-  async function exportarDOCX(qs, nomeArq) {
-    await loadScript(
-      "https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js",
-      "docx"
-    );
-    const D = window.docx;
-    const { Document, Packer, Paragraph, TextRun, AlignmentType } = D;
-
-    const p = (children, opts={}) => new Paragraph({ children, ...opts });
-    const t = (text, opts={}) => new TextRun({ text: String(text||""), ...opts });
-    const br = () => p([t("")], { spacing:{ after:120 } });
-
-    const children = [
-      p([t("SIMULADO ENEM Â· CIÃŠNCIAS HUMANAS", { bold:true, size:28, color:"6C63FF" })],
-        { alignment: AlignmentType.CENTER, spacing:{ after:400 } }),
-    ];
-
-    qs.forEach((q, i) => {
-      const hab = q.habilidade?.match(/H\d+/)?.[0] || "";
-      children.push(p([
-        t(`QUESTÃƒO ${i+1}`, { bold:true, size:22, color:"6C63FF" }),
-        t(`   Â·   ${(q.nivel||"").toUpperCase()}   Â·   ${hab}`, { size:18, color:"9090C0" }),
-      ], { spacing:{ before:320, after:100 } }));
-
-      if (q.tema) children.push(p([t(q.tema, { size:17, color:"9090C0", italics:true })], { spacing:{after:160} }));
-
-      // Texto base com borda esquerda simulada por recuo
-      children.push(p([t(q.textoBase, { size:20, italics:true })], { indent:{ left:560 }, spacing:{ after:80 } }));
-      children.push(p([t(q.fonte, { size:16, color:"A0A0C0" })], { indent:{ left:560 }, spacing:{ after:220 } }));
-
-      children.push(p([t(q.comando, { size:21, bold:true })], { spacing:{ after:200 } }));
-
-      (q.opcoes||[]).forEach(op => {
-        children.push(p([
-          t(`${op.letra})  `, { bold:true, size:20 }),
-          t(op.texto, { size:20 }),
-        ], { indent:{ left:280 }, spacing:{ after:120 } }));
-      });
-      children.push(br());
-    });
-
-    // Gabarito
-    children.push(p([t("GABARITO", { bold:true, size:24, color:"6C63FF" })], { spacing:{ before:560, after:200 } }));
-    qs.forEach((q, i) => {
-      const hab = q.habilidade?.match(/H\d+/)?.[0] || "";
-      children.push(p([
-        t(`${i+1}.   ${q.gabarito}`, { bold:true, size:20 }),
-        t(`     ${hab}`, { size:18, color:"9090C0" }),
-      ], { spacing:{ after:120 } }));
-    });
-
-    const doc2 = new Document({ sections:[{ properties:{}, children }] });
-    const blob = await Packer.toBlob(doc2);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href=url; a.download=nomeArq+".docx"; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  function downloadTXT(qs) {
-    const lines = qs.map(q => {
-      const alts = (q.opcoes||[]).map(o => o.letra + ") " + o.texto).join("\n");
-      return "QUESTÃƒO " + q.numero + "\n" + q.textoBase + "\n" + q.fonte + "\n\n" + q.comando + "\n\n" + alts + "\n\nGabarito: " + q.gabarito + "\n" + "â”€".repeat(48);
-    });
-    const txt = lines.join("\n\n");
-    const b = new Blob([txt], {type:"text/plain;charset=utf-8"});
-    const u = URL.createObjectURL(b);
-    const a = document.createElement("a"); a.href=u; a.download="simulado-enem.txt"; a.click();
-    URL.revokeObjectURL(u);
-  }
-
-  async function gerarQuestoes() {
-    setErro(""); setLoading(true); setLoadingMsg(""); setQuestoes([]); setResps({}); setRevs({}); setDownloadFeito(false);
-    const isSimulado = modo === "simulado";
-    const qtd = isSimulado ? qtdSimulado : 1;
-
-    // â”€â”€ 1. Gerar questÃµes via Claude API (em lotes de 3 para evitar timeout) â”€â”€
-    let qs = [];
-    const LOTE = isSimulado ? 3 : 1;
-    const totalLotes = Math.ceil(qtd / LOTE);
-
-    try {
-      for (let lote = 0; lote < totalLotes; lote++) {
-        const offset = lote * LOTE;
-        const qtdLote = Math.min(LOTE, qtd - offset);
-        setLoadingMsg("Gerando questÃµes " + (offset+1) + (qtdLote > 1 ? "â€“" + (offset+qtdLote) : "") + " de " + qtd + "...");
-
-        const res = await fetch("/api/gerar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 4000,
-            messages: [{ role: "user", content: buildPrompt({ disciplina, niveis, tipoItem, tema, qtd: qtdLote, offset }) }],
-          }),
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error.message);
-        const txt = data.content?.map(b => b.type === "text" ? b.text : "").join("") || "";
-        const parsed = JSON.parse(txt.replace(/```json|```/g,"").trim());
-        qs.push(...parsed.questoes);
-      }
-      qs = qs.map((q, i) => ({ ...q, numero: i+1, area: disciplina }));
-    } catch(e) {
-      setErro("Erro ao gerar questÃµes: " + e.message);
-      setLoadingMsg("");
-      setLoading(false);
-      return;
-    }
-
-    // â”€â”€ 2. QuestÃ£o avulsa â†’ exibe na tela â”€â”€
-    if (!isSimulado) {
-      setQuestoes(qs);
-      setLoadingMsg("");
-      setLoading(false);
-      return;
-    }
-
-    // â”€â”€ 3. Simulado â†’ sempre guarda as questÃµes e mostra o painel de download â”€â”€
-    setQuestoes(qs); // salva em state para fallback TXT/JSON
-    const nomeArq = `simulado-enem-${new Date().toISOString().slice(0,10)}`;
-    const errosExport = [];
-
-    // PDF
-    try {
-      setLoadingMsg("Gerando PDF...");
-      await exportarPDF(qs, nomeArq);
-    } catch(e) {
-      console.warn("PDF falhou:", e.message);
-      errosExport.push("PDF");
-    }
-
-    // DOCX
-    try {
-      setLoadingMsg("Gerando Word (.docx)...");
-      await exportarDOCX(qs, nomeArq);
-    } catch(e) {
-      console.warn("DOCX falhou:", e.message);
-      errosExport.push("Word");
-    }
-
-    setLoadingMsg("");
-    setLoading(false);
-    setDownloadFeito(true);
-    if (errosExport.length > 0) {
-      setErro(`NÃ£o foi possÃ­vel gerar: ${errosExport.join(", ")}. Use o download TXT abaixo.`);
-    }
-  }
-
+  // (exportarDOCX movida para server-side)
   // â”€â”€ Leitura de arquivo â”€â”€
   async function lerArquivo(file) {
     setErroImport(""); setAnalise(null); setArquivo(null);
