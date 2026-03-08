@@ -1,4 +1,5 @@
-export const maxDuration = 60; // Vercel max timeout em segundos
+xport const maxDuration = 60;
+export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
