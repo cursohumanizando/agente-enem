@@ -30,10 +30,10 @@ function buildHTML(questoes) {
     return `
       <div class="questao ${i > 0 ? 'page-break' : ''}">
         <div class="questao-header">
-          <div class="numero">Questão ${i + 1}</div>
+          <div class="numero">QuestÃ£o ${i + 1}</div>
           <div class="tags">
             <span class="tag area">${q.area || ''}</span>
-            <span class="tag nivel nivel-${(q.nivel || '').toLowerCase().replace('í','i').replace('é','e')}">${q.nivel || ''}</span>
+            <span class="tag nivel nivel-${(q.nivel || '').toLowerCase().replace('Ã­','i').replace('Ã©','e')}">${q.nivel || ''}</span>
             <span class="tag hab">${(q.habilidade || '').match(/H\d+/)?.[0] || ''}</span>
           </div>
         </div>
@@ -54,7 +54,7 @@ function buildHTML(questoes) {
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Simulado ENEM · Humanizando</title>
+<title>Simulado ENEM Â· Humanizando</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Georgia', serif; color: #1a1a2e; background: #fff; padding: 0; }
@@ -122,12 +122,12 @@ function buildHTML(questoes) {
 <body>
 
 <div class="capa">
-  <div class="capa-titulo">Humanizando · Agente Elaborador ENEM</div>
-  <div class="capa-nome">Simulado — Ciências Humanas</div>
-  <div class="capa-sub">Ciências Humanas e suas Tecnologias · Padrão ENEM</div>
+  <div class="capa-titulo">Humanizando Â· Agente Elaborador ENEM</div>
+  <div class="capa-nome">Simulado â€” CiÃªncias Humanas</div>
+  <div class="capa-sub">CiÃªncias Humanas e suas Tecnologias Â· PadrÃ£o ENEM</div>
   <div class="capa-info">
-    <span>📋 ${questoes.length} questões</span>
-    <span>📅 ${new Date().toLocaleDateString('pt-BR')}</span>
+    <span>ðŸ“‹ ${questoes.length} questÃµes</span>
+    <span>ðŸ“… ${new Date().toLocaleDateString('pt-BR')}</span>
   </div>
 </div>
 
