@@ -30,16 +30,28 @@ function buildHTML(questoes) {
     return `
       <div class="questao ${i > 0 ? 'page-break' : ''}">
         <div class="questao-header">
-          <div class="numero">Questão ${i + 1}</div>
+          <div class="numero">QuestÃ£o ${i + 1}</div>
           <div class="tags">
             <span class="tag area">${q.area || ''}</span>
-            <span class="tag nivel nivel-${(q.nivel || '').toLowerCase().replace('í','i').replace('é','e')}">${q.nivel || ''}</span>
+            <span class="tag nivel nivel-${(q.nivel || '').toLowerCase().replace('Ã­','i').replace('Ã©','e')}">${q.nivel || ''}</span>
             <span class="tag hab">${(q.habilidade || '').match(/H\d+/)?.[0] || ''}</span>
           </div>
         </div>
         <div class="tema">${q.tema || ''}</div>
         <div class="texto-base">${(q.textoBase || '').replace(/\n/g, '<br>')}</div>
         <div class="fonte">${q.fonte || ''}</div>
+        ${q.recursoVisual && q.recursoVisual.descricao ? `
+        <div class="recurso-visual">
+          <div class="recurso-icone">${
+            q.recursoVisual.tipo === 'mapa' ? 'ðŸ—º' :
+            q.recursoVisual.tipo === 'grÃ¡fico' ? 'ðŸ“Š' :
+            q.recursoVisual.tipo === 'tabela' ? 'ðŸ“‹' :
+            q.recursoVisual.tipo === 'charge' ? 'ðŸŽ¨' :
+            q.recursoVisual.tipo === 'fotografia' ? 'ðŸ“·' : 'ðŸ“Œ'
+          } ${(q.recursoVisual.tipo || '').toUpperCase()} SUGERIDO</div>
+          <div class="recurso-desc">${q.recursoVisual.descricao}</div>
+          ${q.recursoVisual.fonteRecurso ? `<div class="recurso-fonte">ðŸ“Ž Fonte: ${q.recursoVisual.fonteRecurso}</div>` : ''}
+        </div>` : ''}
         <div class="comando">${q.comando || ''}</div>
         <div class="opcoes">${opcoesHTML}</div>
       </div>
@@ -54,7 +66,7 @@ function buildHTML(questoes) {
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Simulado ENEM · Humanizando</title>
+<title>Simulado ENEM Â· Humanizando</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Georgia', serif; color: #1a1a2e; background: #fff; padding: 0; }
@@ -96,7 +108,11 @@ function buildHTML(questoes) {
     margin-bottom: 6px;
     border-radius: 0 8px 8px 0;
   }
-  .fonte { font-size: 11px; color: #9090b0; text-align: right; margin-bottom: 16px; font-family: monospace; }
+  .fonte { font-size: 11px; color: #9090b0; text-align: right; margin-bottom: 10px; font-family: monospace; }
+  .recurso-visual { border: 1.5px dashed #c8a820; background: #fefae8; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; }
+  .recurso-icone { font-size: 10px; font-family: monospace; color: #8a6800; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }
+  .recurso-desc { font-size: 12px; color: #4a3800; line-height: 1.6; margin-bottom: 4px; }
+  .recurso-fonte { font-size: 10px; color: #8a8060; font-family: monospace; }
   .comando { font-size: 14px; font-weight: 600; line-height: 1.6; margin-bottom: 16px; color: #1a1a2e; }
   
   .opcoes { display: flex; flex-direction: column; gap: 8px; }
@@ -122,12 +138,12 @@ function buildHTML(questoes) {
 <body>
 
 <div class="capa">
-  <div class="capa-titulo">Humanizando · Agente Elaborador ENEM</div>
-  <div class="capa-nome">Simulado — Ciências Humanas</div>
-  <div class="capa-sub">Ciências Humanas e suas Tecnologias · Padrão ENEM</div>
+  <div class="capa-titulo">Humanizando Â· Agente Elaborador ENEM</div>
+  <div class="capa-nome">Simulado â€” CiÃªncias Humanas</div>
+  <div class="capa-sub">CiÃªncias Humanas e suas Tecnologias Â· PadrÃ£o ENEM</div>
   <div class="capa-info">
-    <span>📋 ${questoes.length} questões</span>
-    <span>📅 ${new Date().toLocaleDateString('pt-BR')}</span>
+    <span>ðŸ“‹ ${questoes.length} questÃµes</span>
+    <span>ðŸ“… ${new Date().toLocaleDateString('pt-BR')}</span>
   </div>
 </div>
 
