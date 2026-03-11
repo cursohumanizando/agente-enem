@@ -1,11 +1,16 @@
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
-export const config = { api: { bodyParser: { sizeLimit: '20mb' } } };
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const payload = { ...body, max_tokens: 16000 };
+
+    // ForÃ§ar max_tokens alto para garantir que questÃµes longas nÃ£o sejam cortadas
+    const payload = {
+      ...body,
+      max_tokens: 16000,
+    };
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -15,6 +20,7 @@ export async function POST(request) {
       },
       body: JSON.stringify(payload),
     });
+
     const data = await response.json();
     return Response.json(data);
   } catch (error) {
