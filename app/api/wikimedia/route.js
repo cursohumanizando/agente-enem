@@ -1,3 +1,4 @@
+// v2 - Google Custom Search API
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
