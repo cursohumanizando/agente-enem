@@ -124,15 +124,25 @@ export async function POST(request) {
 
     // 1. Tenta biblioteca curada primeiro
     const curado = encontrarCurado(descricao, tipo, tema);
+    console.log('[wikimedia] curado:', curado ? curado.url : 'nenhum');
     if (curado) {
       const img = await baixarImagem(curado.url);
       if (img) return Response.json({ found: true, ...img });
     }
 
-    // 2. Gera query via Claude e busca no Wikimedia Commons
+    // 2. Gera query via Claude
     const searchQuery = await gerarQueryBusca(descricao, tipo, tema);
-    if (searchQuery) {
-      const wikimediaUrl = await buscarWikimediaCommons(searchQuery, tipo);
+    console.log('[wikimedia] query gerada:', searchQuery);
+
+    // 3. Fallback: usa tema diretamente se Claude falhar
+    const queries = searchQuery
+      ? [searchQuery, tema]
+      : [tema, descricao.slice(0, 60)];
+
+    for (const q of queries) {
+      if (!q) continue;
+      const wikimediaUrl = await buscarWikimediaCommons(q, tipo);
+      console.log('[wikimedia] resultado para "' + q + '":', wikimediaUrl);
       if (wikimediaUrl) {
         const img = await baixarImagem(wikimediaUrl);
         if (img) return Response.json({ found: true, ...img });
@@ -142,7 +152,7 @@ export async function POST(request) {
     return Response.json({ found: false });
 
   } catch (error) {
-    console.error('Erro:', error.message);
+    console.error('[wikimedia] erro:', error.message);
     return Response.json({ found: false });
   }
 }
