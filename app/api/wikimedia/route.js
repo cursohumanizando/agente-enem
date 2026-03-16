@@ -1,4 +1,4 @@
-// v2 - Google Custom Search API
+// v3 - Wikimedia Commons API (sem necessidade de chave)
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
@@ -43,38 +43,54 @@ function encontrarCurado(descricao, tipo, tema) {
   return maiorScore > 0 ? melhor : null;
 }
 
-// Busca imagem via Google Custom Search API
-async function buscarGoogleImages(query) {
-  const apiKey = process.env.GOOGLE_API_KEY;
-  const cx = process.env.GOOGLE_CX;
-
-  if (!apiKey || !cx) return null;
-
+// Busca imagem no Wikimedia Commons (sem chave de API)
+async function buscarWikimediaCommons(query, tipo) {
   try {
-    const url = `https://www.googleapis.com/customsearch/v1?` + new URLSearchParams({
-      key: apiKey,
-      cx: cx,
-      q: query,
-      searchType: 'image',
-      num: 5,
-      imgSize: 'large',
-      safe: 'active',
+    // Tipos que aceitam SVG (mapas, infográficos); outros preferem JPG/PNG
+    const aceitaSvg = ['mapa', 'infográfico'].includes(tipo);
+
+    const params = new URLSearchParams({
+      action: 'query',
+      generator: 'search',
+      gsrnamespace: '6',       // namespace 6 = File
+      gsrsearch: query,
+      gsrlimit: '10',
+      prop: 'imageinfo',
+      iiprop: 'url|size|mime',
+      iiurlwidth: '800',
+      format: 'json',
+      origin: '*',
     });
 
-    const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    const items = data.items || [];
-
-    // Pega a primeira imagem disponível
-    for (const item of items) {
-      const imgUrl = item.link;
-      if (imgUrl && (imgUrl.endsWith('.jpg') || imgUrl.endsWith('.jpeg') || imgUrl.endsWith('.png') || imgUrl.includes('jpg') || imgUrl.includes('png'))) {
-        return imgUrl;
+    const res = await fetch(
+      `https://commons.wikimedia.org/w/api.php?${params}`,
+      {
+        headers: { 'User-Agent': 'AgenteENEM/1.0 (cursohumanizando.com)' },
+        signal: AbortSignal.timeout(10000),
       }
+    );
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = Object.values(data.query?.pages || {});
+    if (!pages.length) return null;
+
+    for (const page of pages) {
+      const info = page.imageinfo?.[0];
+      if (!info) continue;
+      const mime = info.mime || '';
+      const url = info.thumburl || info.url;
+      if (!url) continue;
+
+      // Filtra SVG para tipos que não são mapa/infográfico
+      if (!aceitaSvg && mime === 'image/svg+xml') continue;
+
+      // Rejeita imagens muito pequenas
+      if (info.width && info.width < 300) continue;
+
+      return url;
     }
-    return items[0]?.link || null;
+    return null;
   } catch {
     return null;
   }
@@ -85,8 +101,8 @@ async function baixarImagem(url) {
   try {
     const res = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; AgenteENEM/1.0)',
-        'Referer': 'https://www.google.com/',
+        'User-Agent': 'AgenteENEM/1.0 (cursohumanizando.com)',
+        'Referer': 'https://commons.wikimedia.org/',
       },
       signal: AbortSignal.timeout(15000),
     });
@@ -113,12 +129,12 @@ export async function POST(request) {
       if (img) return Response.json({ found: true, ...img });
     }
 
-    // 2. Busca dinâmica via Google Custom Search
+    // 2. Gera query via Claude e busca no Wikimedia Commons
     const searchQuery = await gerarQueryBusca(descricao, tipo, tema);
     if (searchQuery) {
-      const googleUrl = await buscarGoogleImages(searchQuery);
-      if (googleUrl) {
-        const img = await baixarImagem(googleUrl);
+      const wikimediaUrl = await buscarWikimediaCommons(searchQuery, tipo);
+      if (wikimediaUrl) {
+        const img = await baixarImagem(wikimediaUrl);
         if (img) return Response.json({ found: true, ...img });
       }
     }
@@ -154,7 +170,7 @@ async function gerarQueryBusca(descricao, tipo, tema) {
         max_tokens: 50,
         messages: [{
           role: 'user',
-          content: `Create a Google image search query in English (max 5 words) for this educational content. Return ONLY the search terms.\n\nDescription: "${descricao.slice(0, 150)}"\nTheme: "${tema || ''}"\nType: ${tipoEN}\n\nSearch query:`
+          content: `Create a Wikimedia Commons search query in English (max 5 words) for this educational content. Return ONLY the search terms.\n\nDescription: "${descricao.slice(0, 150)}"\nTheme: "${tema || ''}"\nType: ${tipoEN}\n\nSearch query:`
         }]
       })
     });
