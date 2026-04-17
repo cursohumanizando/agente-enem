@@ -198,6 +198,7 @@ const CSS = `
   .sel-native option { background:#1a1a26; }
   .textarea { width:100%; background:var(--panel); border:1.5px solid var(--border); border-radius:10px; padding:14px 16px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; resize:vertical; min-height:100px; transition:border-color .18s; }
   .textarea:focus { border-color:var(--accent); }
+  .texto-suporte { text-align: justify !important; hyphens: auto; -webkit-hyphens: auto; text-align-last: left; }
   .textarea::placeholder { color:var(--muted); }
   .btn-gerar { display:flex; align-items:center; gap:10px; padding:14px 28px; background:linear-gradient(135deg,#6c63ff,#9c63ff); border:none; border-radius:12px; color:#fff; font-family:'Syne',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:all .2s; }
   .btn-gerar:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(108,99,255,.45); }
@@ -257,7 +258,7 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
           const temDoisTextos = texto.includes('TEXTO II');
           const usaLabels = temDoisTextos || (texto.trim() && temImagem);
 
-          const sTexto = { background:"var(--card)", borderLeft:"3px solid var(--accent)", borderRadius:"0 10px 10px 0", padding:"16px 18px", fontSize:"14px", lineHeight:"1.85", color:"#c0c0e0", fontStyle:"italic", textAlign:"justify", marginBottom:"4px" };
+          const sTexto = { background:"var(--card)", borderLeft:"3px solid var(--accent)", borderRadius:"0 10px 10px 0", padding:"16px 18px", fontSize:"14px", lineHeight:"1.85", color:"#c0c0e0", fontStyle:"italic", marginBottom:"4px" };
           const sLabel = { fontSize:"11px", fontWeight:"700", color:"var(--accent)", fontFamily:"'DM Mono',monospace", letterSpacing:"1.5px", marginBottom:"6px" };
           const sFonte = { textAlign:"right", fontSize:"11px", color:"var(--muted)", fontFamily:"'DM Mono',monospace", marginBottom:"16px" };
           const sImg = { padding:"14px 16px", background:"rgba(255,209,102,.07)", border:"1.5px dashed #ffd16688", borderRadius:"10px", marginBottom:"18px" };
@@ -284,12 +285,12 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
               <>
                 <div style={{ marginBottom:"18px" }}>
                   <div style={sLabel}>TEXTO I</div>
-                  <div style={sTexto}>{t1}</div>
+                  <div style={sTexto} className="texto-suporte">{t1}</div>
                   {q.fonteTextoI && <div style={sFonte}>{q.fonteTextoI}</div>}
                 </div>
                 <div style={{ marginBottom:"18px" }}>
                   <div style={sLabel}>TEXTO II</div>
-                  <div style={sTexto}>{t2}</div>
+                  <div style={sTexto} className="texto-suporte">{t2}</div>
                   {q.fonteTextoII && <div style={sFonte}>{q.fonteTextoII}</div>}
                 </div>
                 {temImagem && <BlocoImagem label={null} />}
@@ -303,7 +304,7 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
               <>
                 <div style={{ marginBottom:"18px" }}>
                   <div style={sLabel}>TEXTO I</div>
-                  <div style={sTexto}>{texto}</div>
+                  <div style={sTexto} className="texto-suporte">{texto}</div>
                   {q.fonte && <div style={sFonte}>{q.fonte}</div>}
                 </div>
                 <BlocoImagem label="TEXTO II" />
@@ -315,7 +316,7 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
           if (texto.trim()) {
             return (
               <>
-                <div style={sTexto}>{texto}</div>
+                <div style={sTexto} className="texto-suporte">{texto}</div>
                 {q.fonte && <div style={sFonte}>{q.fonte}</div>}
               </>
             );
