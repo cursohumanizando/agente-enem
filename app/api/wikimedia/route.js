@@ -1,5 +1,78 @@
-// v5 - Multi-source com atribuição: Wikimedia Commons + NASA + Met Museum + Smithsonian
+// v6 - Imagens locais (/public/imagens/) + multi-source fallback
 export const dynamic = 'force-dynamic';
+
+// ---------------------------------------------------------------------------
+// Biblioteca LOCAL — imagens salvas em /public/imagens/ (servidas pelo CDN)
+// Prioridade máxima: zero latência, zero timeout, garantido funcionar
+// ---------------------------------------------------------------------------
+const LOCAL_IMAGENS = [
+  // --- Biomas e vegetação ---
+  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue','floresta'], arquivo: 'biomas-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['caatinga','semiarido','sertao','nordeste seco','estiagem'], arquivo: 'caatinga-semiarido.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['amazonia','floresta amazonica','desmatamento'], arquivo: 'desmatamento-amazonia.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['energia eolica','eolica','aerogerador','energia renovavel','vento'], arquivo: 'energia-eolica-brasil.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['mineracao','minerio','ferro','carajas','vale'], arquivo: 'mineracao-carajas.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+
+  // --- Geografia e população ---
+  { keywords: ['regiao','norte','nordeste','centro-oeste','sudeste','sul','mapa brasil'], arquivo: 'regioes-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['densidade','demografica','populacao','habitantes','distribuicao'], arquivo: 'densidade-demografica-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['anamorfose','cartograma','populacao mundial'], arquivo: 'anamorfose-populacao.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['co2','emissoes','carbono','aquecimento global','efeito estufa'], arquivo: 'emissoes-co2.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+
+  // --- Urbanização e social ---
+  { keywords: ['favela','periferia','moradia precaria','habitacao','rocinha'], arquivo: 'favela-moradia.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['sao paulo','metropole','megatropole','grande cidade','urbanizacao'], arquivo: 'sao-paulo-metropole.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
+  { keywords: ['desigualdade','gini','distribuicao renda','pobreza','riqueza'], arquivo: 'desigualdade-gini.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['globalizacao','comercio internacional','multinacional','neoliberalismo'], arquivo: 'globalizacao.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
+
+  // --- História do Brasil ---
+  { keywords: ['independencia','grito ipiranga','dom pedro','sete de setembro'], arquivo: 'independencia-brasil.jpg', credito: 'Pedro Américo / Wikimedia Commons / Domínio Público' },
+  { keywords: ['proclamacao republica','marechal deodoro','republica velha','1889'], arquivo: 'proclamacao-republica.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['escravidao','escravo','abolicao','trafico negreiro','lei aurea','navio negreiro'], arquivo: 'escravidao-navio.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['quilombo','palmares','zumbi','resistencia negra','quilombola'], arquivo: 'quilombo-zumbi.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['getulio vargas','estado novo','populismo','trabalhismo','era vargas'], arquivo: 'getulio-vargas.jpg', credito: 'Arquivo Nacional / Wikimedia Commons / Domínio Público' },
+  { keywords: ['ditadura','censura','regime militar','1964','ato institucional','repressao'], arquivo: 'ditadura-militar.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['diretas ja','redemocratizacao','abertura politica','eleicao direta'], arquivo: 'diretas-ja.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['mst','reforma agraria','sem terra','latifundio','assentamento'], arquivo: 'mst-reforma-agraria.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+
+  // --- História mundial ---
+  { keywords: ['revolucao industrial','operario','fabrica','capitalismo industrial','chamine','burgues'], arquivo: 'revolucao-industrial.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['primeira guerra','trincheira','grande guerra','1914','1918'], arquivo: 'primeira-guerra-trincheira.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['segunda guerra','holocausto','nazismo','fascismo','hitler','guerra mundial'], arquivo: 'segunda-guerra-holocausto.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['revolucao francesa','guilhotina','bastilha','iluminismo','queda da bastilha'], arquivo: 'revolucao-francesa.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['colonialismo','imperialismo','africa','neocolonialismo','partilha africa'], arquivo: 'colonialismo-africa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['guerra fria','cortina de ferro','urss','capitalismo socialismo','bipolaridade'], arquivo: 'guerra-fria-mapa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+
+  // --- IBGE Atlas Escolar (mapas oficiais do Brasil) ---
+  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue'], arquivo: 'ibge-biomas.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['vegetacao natural','flora brasileira','cobertura vegetal'], arquivo: 'ibge-vegetacao.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['clima','climatico','precipitacao','pluviosidade','semiarido','tropical','equatorial'], arquivo: 'ibge-clima.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['temperatura','termico','calor','frio'], arquivo: 'ibge-temperatura.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['relevo','altimetria','planalto','planicie','depressao','chapada','serras'], arquivo: 'ibge-relevo.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['topografia','perfil topografico'], arquivo: 'ibge-topografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['geologia','geologico','formacao geologica','escudo','bacia sedimentar'], arquivo: 'ibge-geologia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['solo','solos','latossolo','argissolo','pedologia'], arquivo: 'ibge-solos.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['hidrografia','bacia hidrografica','rio','recursos hidricos','aquifero'], arquivo: 'ibge-hidrografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['uso da terra','cobertura do solo','agropecuaria','pastagem','lavoura'], arquivo: 'ibge-uso-terra.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+];
+
+function encontrarLocal(descricao, tipo, tema) {
+  const texto = normalizar(`${descricao} ${tema || ''}`);
+  const tipoNorm = normalizar(tipo || '');
+  let melhor = null, maiorScore = 0;
+  for (const rec of LOCAL_IMAGENS) {
+    // Se tipoRestrito definido, só aplica quando o tipo bate
+    if (rec.tipoRestrito && !rec.tipoRestrito.some(t => normalizar(t) === tipoNorm || tipoNorm.includes(normalizar(t)))) continue;
+    let score = 0;
+    for (const kw of rec.keywords) {
+      if (texto.includes(normalizar(kw))) score += kw.split(' ').length;
+    }
+    if (score > maiorScore) { maiorScore = score; melhor = rec; }
+  }
+  return maiorScore > 0
+    ? { url: `/imagens/${melhor.arquivo}`, credito: melhor.credito }
+    : null;
+}
 
 // ---------------------------------------------------------------------------
 // Biblioteca curada — temas mais frequentes no ENEM
@@ -338,21 +411,27 @@ export async function POST(request) {
   try {
     const { descricao, tipo, tema } = await request.json();
 
-    // 1. IBGE Atlas Escolar (prioridade máxima para mapas de geografia BR)
+    // 1. PRIORIDADE MÁXIMA: imagens locais em /public/imagens/ (zero latência, garantido)
+    const local = encontrarLocal(descricao, tipo, tema);
+    if (local) {
+      return Response.json({ found: true, credito: local.credito, url: local.url });
+    }
+
+    // 2. IBGE Atlas Escolar remoto (fallback — normalmente coberto pelo local)
     const ibge = buscarIBGE(descricao, tipo, tema);
     if (ibge) {
       const img = await baixarImagem(ibge.url);
       if (img) return Response.json({ found: true, credito: ibge.credito, ...img });
     }
 
-    // 2. Biblioteca curada (Wikimedia verificado)
+    // 3. Biblioteca curada Wikimedia (fallback remoto)
     const curado = encontrarCurado(descricao, tipo, tema);
     if (curado) {
       const img = await baixarImagem(curado.url);
       if (img) return Response.json({ found: true, credito: curado.credito, ...img });
     }
 
-    // 3. Gera queries PT + EN via Claude Haiku
+    // 4. Gera queries PT + EN via Claude Haiku
     const { pt: queryPT, en: queryEN } = await gerarQueryBusca(descricao, tipo, tema);
     const queriesPT = [queryPT, tema].filter(Boolean);
 
