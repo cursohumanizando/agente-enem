@@ -230,6 +230,7 @@ async function buscarPixabay(query) {
       key: apiKey,
       q: query,
       image_type: 'photo',
+      lang: 'pt',
       safesearch: 'true',
       per_page: '5',
       min_width: '600',
@@ -263,6 +264,8 @@ async function buscarGoogle(query) {
       searchType: 'image',
       num: '5',
       safe: 'active',
+      lr: 'lang_pt',
+      gl: 'br',
       rights: 'cc_publicdomain|cc_attribute|cc_sharealike',
     });
     const res = await fetch(
@@ -349,12 +352,21 @@ export async function POST(request) {
       if (img) return Response.json({ found: true, credito: curado.credito, ...img });
     }
 
-    // 3. Gera query de busca via Claude Haiku
-    const searchQuery = await gerarQueryBusca(descricao, tipo, tema);
-    const queries = [searchQuery, tema].filter(Boolean);
+    // 3. Gera queries PT + EN via Claude Haiku
+    const { pt: queryPT, en: queryEN } = await gerarQueryBusca(descricao, tipo, tema);
+    const queriesPT = [queryPT, tema].filter(Boolean);
 
-    // 3. Wikimedia Commons (CC + domínio público, com licença real)
-    for (const q of queries) {
+    // 4. Wikipedia em Português (prioridade para conteúdo PT-BR)
+    for (const q of queriesPT) {
+      const resultado = await buscarWikipediaPT(q);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
+      }
+    }
+
+    // 5. Wikimedia Commons em PT (busca com query em português)
+    for (const q of queriesPT) {
       const resultado = await buscarWikimediaCommons(q, tipo);
       if (resultado) {
         const img = await baixarImagem(resultado.url);
@@ -362,18 +374,8 @@ export async function POST(request) {
       }
     }
 
-    // 4. NASA Images (domínio público — ótima para geografia/meio ambiente)
-    const queryNASA = [searchQuery, tema].filter(Boolean).join(' ');
-    if (queryNASA) {
-      const resultado = await buscarNASA(queryNASA);
-      if (resultado) {
-        const img = await baixarImagem(resultado.url);
-        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
-      }
-    }
-
-    // 5. Pixabay (se PIXABAY_API_KEY configurada)
-    for (const q of queries) {
+    // 6. Pixabay em PT (se PIXABAY_API_KEY configurada)
+    for (const q of queriesPT) {
       const resultado = await buscarPixabay(q);
       if (resultado) {
         const img = await baixarImagem(resultado.url);
@@ -381,8 +383,8 @@ export async function POST(request) {
       }
     }
 
-    // 6. Google Custom Search (se GOOGLE_API_KEY + GOOGLE_CX configurados)
-    for (const q of queries) {
+    // 7. Google Custom Search em PT (se GOOGLE_API_KEY + GOOGLE_CX configurados)
+    for (const q of queriesPT) {
       const resultado = await buscarGoogle(q);
       if (resultado) {
         const img = await baixarImagem(resultado.url);
@@ -390,8 +392,15 @@ export async function POST(request) {
       }
     }
 
-    // 7. Met Museum (com atribuição)
-    for (const q of queries) {
+    // 8. NASA Images (domínio público — query em EN pois conteúdo é em inglês)
+    const resultado = await buscarNASA(queryEN || tema || '');
+    if (resultado) {
+      const img = await baixarImagem(resultado.url);
+      if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
+    }
+
+    // 9. Met Museum (fallback)
+    for (const q of queriesPT) {
       const resultado = await buscarMetMuseum(q);
       if (resultado) {
         const img = await baixarImagem(resultado.url);
@@ -399,8 +408,8 @@ export async function POST(request) {
       }
     }
 
-    // 8. Smithsonian (se SMITHSONIAN_API_KEY configurada)
-    for (const q of queries) {
+    // 10. Smithsonian (se SMITHSONIAN_API_KEY configurada)
+    for (const q of queriesPT) {
       const resultado = await buscarSmithsonian(q);
       if (resultado) {
         const img = await baixarImagem(resultado.url);
@@ -417,17 +426,17 @@ export async function POST(request) {
 }
 
 // ---------------------------------------------------------------------------
-// Geração de query via Claude Haiku
+// Geração de queries via Claude Haiku — PT-BR + EN para NASA
 // ---------------------------------------------------------------------------
 async function gerarQueryBusca(descricao, tipo, tema) {
   try {
-    const tipoEN = {
-      'mapa': 'map',
-      'gráfico': 'chart graph',
-      'tabela': 'table data',
-      'charge': 'political cartoon historical',
-      'fotografia': 'historical photograph',
-      'infográfico': 'infographic',
+    const tipoPT = {
+      'mapa': 'mapa',
+      'gráfico': 'gráfico dados',
+      'tabela': 'tabela dados',
+      'charge': 'charge política histórica',
+      'fotografia': 'fotografia histórica',
+      'infográfico': 'infográfico',
     }[tipo] || '';
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -439,14 +448,49 @@ async function gerarQueryBusca(descricao, tipo, tema) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 50,
+        max_tokens: 80,
         messages: [{
           role: 'user',
-          content: `Create a search query in English (max 5 words) to find an image on Wikimedia Commons, NASA Images or museum archives.\nReturn ONLY the search terms.\n\nDescription: "${descricao.slice(0, 150)}"\nTheme: "${tema || ''}"\nType: ${tipoEN}\n\nSearch query:`
+          content: `Crie duas queries de busca para encontrar uma imagem no Wikimedia Commons ou Wikipedia em português.\nRetorne APENAS JSON: {"pt":"query em português (máx 5 palavras)","en":"english query (max 5 words)"}\n\nDescrição: "${descricao.slice(0, 150)}"\nTema: "${tema || ''}"\nTipo: ${tipoPT}\n\nJSON:`
         }]
       })
     });
     const data = await res.json();
-    return data.content?.[0]?.text?.trim().replace(/['"]/g, '').slice(0, 80) || null;
+    const raw = data.content?.[0]?.text?.trim() || '{}';
+    const parsed = JSON.parse(raw.match(/\{.*\}/s)?.[0] || '{}');
+    return { pt: (parsed.pt || tema || '').slice(0, 80), en: (parsed.en || tema || '').slice(0, 80) };
+  } catch { return { pt: tema || '', en: tema || '' }; }
+}
+
+// ---------------------------------------------------------------------------
+// Wikipedia PT — busca imagem de artigo em português
+// ---------------------------------------------------------------------------
+async function buscarWikipediaPT(query) {
+  try {
+    const params = new URLSearchParams({
+      action: 'query',
+      generator: 'search',
+      gsrsearch: query,
+      gsrlimit: '5',
+      prop: 'pageimages|info',
+      pithumbsize: '800',
+      format: 'json',
+      origin: '*',
+    });
+    const res = await fetch(
+      `https://pt.wikipedia.org/w/api.php?${params}`,
+      { headers: { 'User-Agent': 'AgenteENEM/1.0 (cursohumanizando.com)' }, signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = Object.values(data.query?.pages || {});
+    for (const page of pages) {
+      const url = page.thumbnail?.source;
+      if (url) {
+        const titulo = page.title || query;
+        return { url, credito: `${titulo} / Wikipedia em Português / CC BY-SA 4.0` };
+      }
+    }
+    return null;
   } catch { return null; }
 }
