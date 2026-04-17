@@ -626,7 +626,7 @@ export default function App() {
     const isSimulado = modo === "simulado";
     const qtd = isSimulado ? qtdSimulado : 1;
     let qs = [];
-    const LOTE = isSimulado ? 3 : 1;
+    const LOTE = 1;
     const totalLotes = Math.ceil(qtd / LOTE);
     try {
       for (let lote = 0; lote < totalLotes; lote++) {
@@ -678,7 +678,7 @@ export default function App() {
     const disc = analise.disciplinas?.[0] || "Geografia";
     const letras = ["A","B","C","D","E"];
     const nivelCiclo = ["Fácil","Médio","Difícil"];
-    const LOTE = 3;
+    const LOTE = 1;
     const totalLotes = Math.ceil(qtdImport / LOTE);
     const todasQuestoes = [];
 
