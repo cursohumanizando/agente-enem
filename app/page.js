@@ -276,11 +276,16 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
                   {q.recursoVisual.tipo === "mapa" ? "🗺" : q.recursoVisual.tipo === "gráfico" ? "📊" : q.recursoVisual.tipo === "tabela" ? "📋" : q.recursoVisual.tipo === "charge" ? "🎨" : q.recursoVisual.tipo === "fotografia" ? "📷" : "📌"}
                 </span>
                 <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:"#ffd166", letterSpacing:"2px", textTransform:"uppercase" }}>
-                  {q.recursoVisual.tipo} — Wikimedia Commons
+                  {q.recursoVisual.tipo}
                 </span>
               </div>
               <img src={wimg.dataUrl} alt="recurso visual"
                 style={{ width:"100%", maxHeight:"420px", objectFit:"contain", borderRadius:"8px", display:"block" }} />
+              {wimg.credito && (
+                <div style={{ marginTop:"8px", fontSize:"10px", color:"rgba(255,209,102,0.6)", fontFamily:"'DM Mono',monospace", lineHeight:1.4, textAlign:"right" }}>
+                  Fonte: {wimg.credito}
+                </div>
+              )}
             </div>
           );
         })()}

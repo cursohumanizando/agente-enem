@@ -1,5 +1,4 @@
-// v4 - Multi-source: Wikimedia Commons + Met Museum + Smithsonian (opcional)
-export const maxDuration = 30;
+// v5 - Multi-source com atribuição: Wikimedia Commons + NASA + Met Museum + Smithsonian
 export const dynamic = 'force-dynamic';
 
 // ---------------------------------------------------------------------------
@@ -7,40 +6,39 @@ export const dynamic = 'force-dynamic';
 // ---------------------------------------------------------------------------
 const RECURSOS_CURADOS = [
   // --- Geografia do Brasil ---
-  { tipo:['mapa','infográfico'], keywords:['bioma','biomas','amazonia','cerrado','caatinga','mata atlantica','pantanal','vegetacao'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Brazil_Biomes.svg/800px-Brazil_Biomes.svg.png' },
-  { tipo:['mapa'], keywords:['desmatamento','amazonia','floresta'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Amazon_deforestation.jpg/800px-Amazon_deforestation.jpg' },
-  { tipo:['mapa'], keywords:['regiao','norte','nordeste','centro-oeste','sudeste','sul'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Brazil_Regions.svg/800px-Brazil_Regions.svg.png' },
-  { tipo:['mapa'], keywords:['densidade','demografica','populacao','habitantes'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Brazil_population_density_map.svg/800px-Brazil_population_density_map.svg.png' },
-  { tipo:['mapa','infográfico'], keywords:['anamorfose','cartograma','populacao mundial'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/World_population_cartogram.png/800px-World_population_cartogram.png' },
-  { tipo:['mapa','infográfico'], keywords:['co2','emissoes','carbono','aquecimento global'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cartogram_CO2_emissions.png/800px-Cartogram_CO2_emissions.png' },
-  { tipo:['fotografia','mapa'], keywords:['sertao','semiarido','nordeste','seca','estiagem'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Caatinga3.jpg/800px-Caatinga3.jpg' },
-  { tipo:['fotografia'], keywords:['transposicao','sao francisco','canal','integracao'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Transposicao_Rio_Sao_Francisco.jpg/800px-Transposicao_Rio_Sao_Francisco.jpg' },
-  { tipo:['fotografia','infográfico'], keywords:['energia eolica','geracao eolica','aerogerador','vento'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Eolic_Brazil.jpg/800px-Eolic_Brazil.jpg' },
-  { tipo:['fotografia'], keywords:['extrativismo','mineracao','vale','ferro','para'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Carajas_mine.jpg/800px-Carajas_mine.jpg' },
+  { tipo:['mapa','infográfico'], keywords:['bioma','biomas','amazonia','cerrado','caatinga','mata atlantica','pantanal','vegetacao'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Brazil_Biomes.svg/800px-Brazil_Biomes.svg.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['mapa'], keywords:['desmatamento','amazonia','floresta'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Amazon_deforestation.jpg/800px-Amazon_deforestation.jpg', credito:'NASA / Wikimedia Commons / Domínio Público' },
+  { tipo:['mapa'], keywords:['regiao','norte','nordeste','centro-oeste','sudeste','sul'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Brazil_Regions.svg/800px-Brazil_Regions.svg.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['mapa'], keywords:['densidade','demografica','populacao','habitantes'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Brazil_population_density_map.svg/800px-Brazil_population_density_map.svg.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['mapa','infográfico'], keywords:['anamorfose','cartograma','populacao mundial'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/World_population_cartogram.png/800px-World_population_cartogram.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['mapa','infográfico'], keywords:['co2','emissoes','carbono','aquecimento global'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cartogram_CO2_emissions.png/800px-Cartogram_CO2_emissions.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia','mapa'], keywords:['sertao','semiarido','nordeste','seca','estiagem'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Caatinga3.jpg/800px-Caatinga3.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia','infográfico'], keywords:['energia eolica','geracao eolica','aerogerador','vento'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Eolic_Brazil.jpg/800px-Eolic_Brazil.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia'], keywords:['extrativismo','mineracao','vale','ferro','para'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Carajas_mine.jpg/800px-Carajas_mine.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
 
   // --- Urbanização e problemas sociais ---
-  { tipo:['charge','fotografia'], keywords:['favela','periferia','moradia precaria','habitacao'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Rocinha_favela_Brazil.jpg/800px-Rocinha_favela_Brazil.jpg' },
-  { tipo:['fotografia'], keywords:['sao paulo','urbanizacao','metropole','megatropole'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Sao_Paulo_-_Skyscrapers.jpg/800px-Sao_Paulo_-_Skyscrapers.jpg' },
-  { tipo:['gráfico','tabela'], keywords:['desigualdade','gini','distribuicao renda'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Gini_Coefficient_World_CIA_Report_2015.png/800px-Gini_Coefficient_World_CIA_Report_2015.png' },
+  { tipo:['charge','fotografia'], keywords:['favela','periferia','moradia precaria','habitacao'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Rocinha_favela_Brazil.jpg/800px-Rocinha_favela_Brazil.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia'], keywords:['sao paulo','urbanizacao','metropole','megatropole'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Sao_Paulo_-_Skyscrapers.jpg/800px-Sao_Paulo_-_Skyscrapers.jpg', credito:'Wikimedia Commons / CC BY-SA 2.0' },
+  { tipo:['gráfico','tabela'], keywords:['desigualdade','gini','distribuicao renda'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Gini_Coefficient_World_CIA_Report_2015.png/800px-Gini_Coefficient_World_CIA_Report_2015.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
 
   // --- História do Brasil ---
-  { tipo:['fotografia','charge'], keywords:['independencia','grito ipiranga','dom pedro','proclamacao independencia'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Independ%C3%AAncia_ou_Morte.jpg/800px-Independ%C3%AAncia_ou_Morte.jpg' },
-  { tipo:['fotografia','charge'], keywords:['proclamacao republica','marechal deodoro','republica velha'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Proclama%C3%A7%C3%A3o_da_Rep%C3%BAblica_by_Benedito_Calixto_%281893%29.jpg/800px-Proclama%C3%A7%C3%A3o_da_Rep%C3%BAblica_by_Benedito_Calixto_%281893%29.jpg' },
-  { tipo:['fotografia','charge'], keywords:['escravidao','escravo','abolicao','trafico negreiro','lei aurea'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Slave_ship_diagram.jpg/800px-Slave_ship_diagram.jpg' },
-  { tipo:['fotografia'], keywords:['quilombo','palmares','zumbi','resistencia negra'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Zumbi.jpg/800px-Zumbi.jpg' },
-  { tipo:['fotografia','charge'], keywords:['getulio vargas','estado novo','populismo','trabalhismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Get%C3%BAlio_Vargas_foto_oficial.jpg/800px-Get%C3%BAlio_Vargas_foto_oficial.jpg' },
-  { tipo:['fotografia','charge'], keywords:['ditadura','censura','regime militar','1964','ato institucional'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Pinochet_saluting_1995.jpg/800px-Pinochet_saluting_1995.jpg' },
-  { tipo:['fotografia','charge'], keywords:['diretas ja','redemocratizacao','abertura politica'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Diretas_Ja.jpg/800px-Diretas_Ja.jpg' },
-  { tipo:['fotografia','charge'], keywords:['mst','reforma agraria','sem terra','latifundio'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/MST_Brazil.jpg/800px-MST_Brazil.jpg' },
+  { tipo:['fotografia','charge'], keywords:['independencia','grito ipiranga','dom pedro','proclamacao independencia'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Independ%C3%AAncia_ou_Morte.jpg/800px-Independ%C3%AAncia_ou_Morte.jpg', credito:'Pedro Américo / Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia','charge'], keywords:['proclamacao republica','marechal deodoro','republica velha'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Proclama%C3%A7%C3%A3o_da_Rep%C3%BAblica_by_Benedito_Calixto_%281893%29.jpg/800px-Proclama%C3%A7%C3%A3o_da_Rep%C3%BAblica_by_Benedito_Calixto_%281893%29.jpg', credito:'Benedito Calixto (1893) / Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia','charge'], keywords:['escravidao','escravo','abolicao','trafico negreiro','lei aurea'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Slave_ship_diagram.jpg/800px-Slave_ship_diagram.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia'], keywords:['quilombo','palmares','zumbi','resistencia negra'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Zumbi.jpg/800px-Zumbi.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia','charge'], keywords:['getulio vargas','estado novo','populismo','trabalhismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Get%C3%BAlio_Vargas_foto_oficial.jpg/800px-Get%C3%BAlio_Vargas_foto_oficial.jpg', credito:'Arquivo Nacional / Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia','charge'], keywords:['ditadura','censura','regime militar','1964','ato institucional'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Pinochet_saluting_1995.jpg/800px-Pinochet_saluting_1995.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['fotografia','charge'], keywords:['diretas ja','redemocratizacao','abertura politica'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Diretas_Ja.jpg/800px-Diretas_Ja.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia','charge'], keywords:['mst','reforma agraria','sem terra','latifundio'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/MST_Brazil.jpg/800px-MST_Brazil.jpg', credito:'Wikimedia Commons / CC BY-SA 3.0' },
 
   // --- História mundial ---
-  { tipo:['charge','fotografia'], keywords:['revolucao industrial','operario','fabrica','capitalismo industrial','chamine','burgues'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Uss_men_in_factory.jpg/800px-Uss_men_in_factory.jpg' },
-  { tipo:['charge','fotografia'], keywords:['primeira guerra','trincheira','grande guerra'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Cheshire_Regiment_trench_Somme_1916.jpg/800px-Cheshire_Regiment_trench_Somme_1916.jpg' },
-  { tipo:['charge','fotografia'], keywords:['segunda guerra','holocausto','nazismo','fascismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Buchenwald_Slave_Laborers_Liberation.jpg/800px-Buchenwald_Slave_Laborers_Liberation.jpg' },
-  { tipo:['charge','fotografia'], keywords:['revolucao francesa','guilhotina','bastilha','iluminismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Anonymous_-_Prise_de_la_Bastille.jpg/800px-Anonymous_-_Prise_de_la_Bastille.jpg' },
-  { tipo:['charge','fotografia'], keywords:['colonialismo','imperialismo','africa','neocolonialismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Scramble_for_Africa_1880_to_1913.png/800px-Scramble_for_Africa_1880_to_1913.png' },
-  { tipo:['mapa','infográfico'], keywords:['guerra fria','cortina de ferro','urss','capitalismo socialismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Cold_War_Map_1980.svg/800px-Cold_War_Map_1980.svg.png' },
-  { tipo:['fotografia','charge'], keywords:['globalizacao','comercio internacional','multinacional','neoliberalismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Crowded_street_in_Shanghai.jpg/800px-Crowded_street_in_Shanghai.jpg' },
+  { tipo:['charge','fotografia'], keywords:['revolucao industrial','operario','fabrica','capitalismo industrial','chamine','burgues'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Uss_men_in_factory.jpg/800px-Uss_men_in_factory.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['charge','fotografia'], keywords:['primeira guerra','trincheira','grande guerra'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Cheshire_Regiment_trench_Somme_1916.jpg/800px-Cheshire_Regiment_trench_Somme_1916.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['charge','fotografia'], keywords:['segunda guerra','holocausto','nazismo','fascismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Buchenwald_Slave_Laborers_Liberation.jpg/800px-Buchenwald_Slave_Laborers_Liberation.jpg', credito:'US Army / Wikimedia Commons / Domínio Público' },
+  { tipo:['charge','fotografia'], keywords:['revolucao francesa','guilhotina','bastilha','iluminismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Anonymous_-_Prise_de_la_Bastille.jpg/800px-Anonymous_-_Prise_de_la_Bastille.jpg', credito:'Wikimedia Commons / Domínio Público' },
+  { tipo:['charge','fotografia'], keywords:['colonialismo','imperialismo','africa','neocolonialismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Scramble_for_Africa_1880_to_1913.png/800px-Scramble_for_Africa_1880_to_1913.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['mapa','infográfico'], keywords:['guerra fria','cortina de ferro','urss','capitalismo socialismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Cold_War_Map_1980.svg/800px-Cold_War_Map_1980.svg.png', credito:'Wikimedia Commons / CC BY-SA 3.0' },
+  { tipo:['fotografia','charge'], keywords:['globalizacao','comercio internacional','multinacional','neoliberalismo'], url:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Crowded_street_in_Shanghai.jpg/800px-Crowded_street_in_Shanghai.jpg', credito:'Wikimedia Commons / CC BY-SA 2.0' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -68,8 +66,13 @@ function encontrarCurado(descricao, tipo, tema) {
   return maiorScore > 0 ? melhor : null;
 }
 
+// Limpa HTML de strings de metadados (ex: "<bdi>Autor</bdi>")
+function limparHTML(str) {
+  return (str || '').replace(/<[^>]+>/g, '').trim();
+}
+
 // ---------------------------------------------------------------------------
-// Fonte 1: Wikimedia Commons (sem chave)
+// Fonte 1: Wikimedia Commons — com extração de licença e autor
 // ---------------------------------------------------------------------------
 async function buscarWikimediaCommons(query, tipo) {
   try {
@@ -81,7 +84,8 @@ async function buscarWikimediaCommons(query, tipo) {
       gsrsearch: query,
       gsrlimit: '10',
       prop: 'imageinfo',
-      iiprop: 'url|size|mime',
+      iiprop: 'url|size|mime|extmetadata',
+      iiextmetadatafilter: 'Artist|LicenseShortName|Credit',
       iiurlwidth: '800',
       format: 'json',
       origin: '*',
@@ -101,14 +105,53 @@ async function buscarWikimediaCommons(query, tipo) {
       if (!mime.startsWith('image/')) continue;
       if (info.width && info.width < 300) continue;
       const url = info.thumburl || info.url;
-      if (url) return url;
+      if (!url) continue;
+
+      // Monta crédito a partir dos metadados
+      const meta = info.extmetadata || {};
+      const autor = limparHTML(meta.Artist?.value || meta.Credit?.value || '');
+      const licenca = limparHTML(meta.LicenseShortName?.value || '');
+      const partes = [autor, 'Wikimedia Commons', licenca].filter(Boolean);
+      // Remove duplicatas caso autor seja "Wikimedia Commons"
+      const creditoFinal = [...new Set(partes)].join(' / ');
+
+      return { url, credito: creditoFinal || 'Wikimedia Commons' };
     }
     return null;
   } catch { return null; }
 }
 
 // ---------------------------------------------------------------------------
-// Fonte 2: Met Museum (sem chave — domínio público)
+// Fonte 2: NASA Images API — totalmente domínio público, ótima para geografia
+// ---------------------------------------------------------------------------
+async function buscarNASA(query) {
+  try {
+    const params = new URLSearchParams({
+      q: query,
+      media_type: 'image',
+      page_size: '5',
+    });
+    const res = await fetch(
+      `https://images-api.nasa.gov/search?${params}`,
+      { headers: { 'User-Agent': 'AgenteENEM/1.0' }, signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const items = data.collection?.items || [];
+    for (const item of items) {
+      const thumb = item.links?.find(l => l.rel === 'preview')?.href;
+      if (thumb) {
+        const titulo = item.data?.[0]?.title || '';
+        const centro = item.data?.[0]?.center || 'NASA';
+        return { url: thumb, credito: `${titulo ? titulo + ' / ' : ''}${centro} / Domínio Público` };
+      }
+    }
+    return null;
+  } catch { return null; }
+}
+
+// ---------------------------------------------------------------------------
+// Fonte 3: Met Museum Open Access
 // ---------------------------------------------------------------------------
 async function buscarMetMuseum(query) {
   try {
@@ -116,7 +159,6 @@ async function buscarMetMuseum(query) {
       `https://collectionapi.metmuseum.org/public/collection/v1/search?` + new URLSearchParams({
         q: query,
         hasImages: 'true',
-        isPublicDomain: 'true',
       }),
       { signal: AbortSignal.timeout(8000) }
     );
@@ -130,14 +172,20 @@ async function buscarMetMuseum(query) {
       );
       if (!objRes.ok) continue;
       const obj = await objRes.json();
-      if (obj.primaryImageSmall && obj.isPublicDomain) return obj.primaryImageSmall;
+      const imgUrl = obj.primaryImageSmall || obj.primaryImage;
+      if (!imgUrl) continue;
+      const artista = obj.artistDisplayName || '';
+      const data = obj.objectDate || '';
+      const licenca = obj.isPublicDomain ? 'Domínio Público' : 'CC0';
+      const partes = [artista, data, 'Metropolitan Museum of Art', licenca].filter(Boolean);
+      return { url: imgUrl, credito: partes.join(' / ') };
     }
     return null;
   } catch { return null; }
 }
 
 // ---------------------------------------------------------------------------
-// Fonte 3: Smithsonian Open Access (requer SMITHSONIAN_API_KEY na Vercel)
+// Fonte 4: Smithsonian Open Access (requer SMITHSONIAN_API_KEY)
 // ---------------------------------------------------------------------------
 async function buscarSmithsonian(query) {
   const apiKey = process.env.SMITHSONIAN_API_KEY;
@@ -153,7 +201,10 @@ async function buscarSmithsonian(query) {
     for (const row of (data.response?.rows || [])) {
       const media = row.content?.descriptiveNonRepeating?.online_media;
       const url = media?.media?.[0]?.content;
-      if (url && url.startsWith('http')) return url;
+      if (url && url.startsWith('http')) {
+        const titulo = row.title || '';
+        return { url, credito: `${titulo ? titulo + ' / ' : ''}Smithsonian Institution / CC0` };
+      }
     }
     return null;
   } catch { return null; }
@@ -192,39 +243,47 @@ export async function POST(request) {
     const curado = encontrarCurado(descricao, tipo, tema);
     if (curado) {
       const img = await baixarImagem(curado.url);
-      if (img) return Response.json({ found: true, ...img });
+      if (img) return Response.json({ found: true, credito: curado.credito, ...img });
     }
 
-    // 2. Gera query via Claude Haiku
+    // 2. Gera query de busca via Claude Haiku
     const searchQuery = await gerarQueryBusca(descricao, tipo, tema);
-
-    // Queries a tentar em cada fonte
     const queries = [searchQuery, tema].filter(Boolean);
 
-    // 3. Wikimedia Commons
+    // 3. Wikimedia Commons (CC + domínio público, com licença real)
     for (const q of queries) {
-      const url = await buscarWikimediaCommons(q, tipo);
-      if (url) {
-        const img = await baixarImagem(url);
-        if (img) return Response.json({ found: true, ...img });
+      const resultado = await buscarWikimediaCommons(q, tipo);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
       }
     }
 
-    // 4. Met Museum
-    for (const q of queries) {
-      const url = await buscarMetMuseum(q);
-      if (url) {
-        const img = await baixarImagem(url);
-        if (img) return Response.json({ found: true, ...img });
+    // 4. NASA Images (domínio público — ótima para geografia/meio ambiente)
+    const queryNASA = [searchQuery, tema].filter(Boolean).join(' ');
+    if (queryNASA) {
+      const resultado = await buscarNASA(queryNASA);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
       }
     }
 
-    // 5. Smithsonian (se SMITHSONIAN_API_KEY configurada na Vercel)
+    // 5. Met Museum (com atribuição)
     for (const q of queries) {
-      const url = await buscarSmithsonian(q);
-      if (url) {
-        const img = await baixarImagem(url);
-        if (img) return Response.json({ found: true, ...img });
+      const resultado = await buscarMetMuseum(q);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
+      }
+    }
+
+    // 6. Smithsonian (se SMITHSONIAN_API_KEY configurada)
+    for (const q of queries) {
+      const resultado = await buscarSmithsonian(q);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
       }
     }
 
@@ -262,7 +321,7 @@ async function gerarQueryBusca(descricao, tipo, tema) {
         max_tokens: 50,
         messages: [{
           role: 'user',
-          content: `Create a search query in English (max 5 words) to find a public domain image on Wikimedia Commons or museum archives. Return ONLY the search terms.\n\nDescription: "${descricao.slice(0, 150)}"\nTheme: "${tema || ''}"\nType: ${tipoEN}\n\nSearch query:`
+          content: `Create a search query in English (max 5 words) to find an image on Wikimedia Commons, NASA Images or museum archives.\nReturn ONLY the search terms.\n\nDescription: "${descricao.slice(0, 150)}"\nTheme: "${tema || ''}"\nType: ${tipoEN}\n\nSearch query:`
         }]
       })
     });
