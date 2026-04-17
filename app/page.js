@@ -250,44 +250,79 @@ function CartaoQuestao({ q, idx, total, wikiImgs, resp, onResp, rev, onRev }) {
       </div>
 
       <div style={{ padding:"20px" }}>
-        <div style={{ background:"var(--card)", borderLeft:"3px solid var(--accent)", borderRadius:"0 10px 10px 0", padding:"16px 18px", fontSize:"14px", lineHeight:"1.85", color:"#c0c0e0", fontStyle:"italic", marginBottom:"6px" }}>
-          {q.textoBase && q.textoBase.startsWith("TEXTO I") ? (
-            q.textoBase.split(/\n(?=TEXTO II)/).map((bloco, i) => (
-              <div key={i} style={{ marginBottom: i === 0 ? "12px" : "0" }}>
-                <div style={{ fontSize:"11px", fontWeight:"700", color:"var(--accent)", fontFamily:"'DM Mono',monospace", marginBottom:"6px", fontStyle:"normal" }}>
-                  {bloco.startsWith("TEXTO I") ? "TEXTO I" : "TEXTO II"}
-                </div>
-                <div style={{ fontStyle:"italic" }}>
-                  {bloco.replace(/^TEXTO (I|II)\n/, "")}
-                </div>
-              </div>
-            ))
-          ) : q.textoBase}
-        </div>
-        <div style={{ textAlign:"right", fontSize:"11px", color:"var(--muted)", fontFamily:"'DM Mono',monospace", marginBottom:"18px" }}>{q.fonte}</div>
-
-        {q.recursoVisual && q.recursoVisual.descricao && (() => {
+        {(() => {
+          const texto = q.textoBase || '';
           const wimg = wikiImgs[q.numero];
-          if (!wimg) return null;
-          return (
-            <div style={{ padding:"14px 16px", background:"rgba(255,209,102,.07)", border:"1.5px dashed #ffd16688", borderRadius:"10px", marginBottom:"18px" }}>
+          const temImagem = q.recursoVisual?.descricao && wimg;
+          const temDoisTextos = texto.includes('TEXTO II');
+          const usaLabels = temDoisTextos || (texto.trim() && temImagem);
+
+          const sTexto = { background:"var(--card)", borderLeft:"3px solid var(--accent)", borderRadius:"0 10px 10px 0", padding:"16px 18px", fontSize:"14px", lineHeight:"1.85", color:"#c0c0e0", fontStyle:"italic", textAlign:"justify", marginBottom:"4px" };
+          const sLabel = { fontSize:"11px", fontWeight:"700", color:"var(--accent)", fontFamily:"'DM Mono',monospace", letterSpacing:"1.5px", marginBottom:"6px" };
+          const sFonte = { textAlign:"right", fontSize:"11px", color:"var(--muted)", fontFamily:"'DM Mono',monospace", marginBottom:"16px" };
+          const sImg = { padding:"14px 16px", background:"rgba(255,209,102,.07)", border:"1.5px dashed #ffd16688", borderRadius:"10px", marginBottom:"18px" };
+          const icones = { mapa:"🗺", "gráfico":"📊", tabela:"📋", charge:"🎨", fotografia:"📷" };
+
+          const BlocoImagem = ({ label }) => wimg ? (
+            <div style={sImg}>
+              {label && <div style={sLabel}>{label}</div>}
               <div style={{ display:"flex", gap:"10px", alignItems:"center", marginBottom:"10px" }}>
-                <span style={{ fontSize:"18px" }}>
-                  {q.recursoVisual.tipo === "mapa" ? "🗺" : q.recursoVisual.tipo === "gráfico" ? "📊" : q.recursoVisual.tipo === "tabela" ? "📋" : q.recursoVisual.tipo === "charge" ? "🎨" : q.recursoVisual.tipo === "fotografia" ? "📷" : "📌"}
-                </span>
-                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:"#ffd166", letterSpacing:"2px", textTransform:"uppercase" }}>
-                  {q.recursoVisual.tipo}
-                </span>
+                <span style={{ fontSize:"18px" }}>{icones[q.recursoVisual.tipo] || "📌"}</span>
+                <span style={{ fontFamily:"'DM Mono',monospace", fontSize:"10px", color:"#ffd166", letterSpacing:"2px", textTransform:"uppercase" }}>{q.recursoVisual.tipo}</span>
               </div>
-              <img src={wimg.dataUrl} alt="recurso visual"
-                style={{ width:"100%", maxHeight:"420px", objectFit:"contain", borderRadius:"8px", display:"block" }} />
-              {wimg.credito && (
-                <div style={{ marginTop:"8px", fontSize:"10px", color:"rgba(255,209,102,0.6)", fontFamily:"'DM Mono',monospace", lineHeight:1.4, textAlign:"right" }}>
-                  Fonte: {wimg.credito}
-                </div>
-              )}
+              <img src={wimg.dataUrl} alt="recurso visual" style={{ width:"100%", maxHeight:"420px", objectFit:"contain", borderRadius:"8px", display:"block" }} />
+              {wimg.credito && <div style={{ marginTop:"8px", fontSize:"10px", color:"rgba(255,209,102,0.6)", fontFamily:"'DM Mono',monospace", lineHeight:1.4, textAlign:"right" }}>Fonte: {wimg.credito}</div>}
             </div>
-          );
+          ) : null;
+
+          // Caso 1: TEXTO I + TEXTO II no textoBase
+          if (temDoisTextos) {
+            const blocos = texto.split(/\n{1,2}(?=TEXTO II)/);
+            const t1 = (blocos[0] || '').replace(/^TEXTO I\s*\n?/, '').trim();
+            const t2 = (blocos[1] || '').replace(/^TEXTO II\s*\n?/, '').trim();
+            return (
+              <>
+                <div style={{ marginBottom:"18px" }}>
+                  <div style={sLabel}>TEXTO I</div>
+                  <div style={sTexto}>{t1}</div>
+                  {q.fonteTextoI && <div style={sFonte}>{q.fonteTextoI}</div>}
+                </div>
+                <div style={{ marginBottom:"18px" }}>
+                  <div style={sLabel}>TEXTO II</div>
+                  <div style={sTexto}>{t2}</div>
+                  {q.fonteTextoII && <div style={sFonte}>{q.fonteTextoII}</div>}
+                </div>
+                {temImagem && <BlocoImagem label={null} />}
+              </>
+            );
+          }
+
+          // Caso 2: texto + imagem → TEXTO I / TEXTO II
+          if (texto.trim() && temImagem) {
+            return (
+              <>
+                <div style={{ marginBottom:"18px" }}>
+                  <div style={sLabel}>TEXTO I</div>
+                  <div style={sTexto}>{texto}</div>
+                  {q.fonte && <div style={sFonte}>{q.fonte}</div>}
+                </div>
+                <BlocoImagem label="TEXTO II" />
+              </>
+            );
+          }
+
+          // Caso 3: só texto
+          if (texto.trim()) {
+            return (
+              <>
+                <div style={sTexto}>{texto}</div>
+                {q.fonte && <div style={sFonte}>{q.fonte}</div>}
+              </>
+            );
+          }
+
+          // Caso 4: só imagem
+          return temImagem ? <BlocoImagem label={null} /> : null;
         })()}
 
         <p style={{ fontSize:"15px", fontWeight:600, lineHeight:1.6, marginBottom:"18px", color:"var(--text)" }}>{q.comando}</p>

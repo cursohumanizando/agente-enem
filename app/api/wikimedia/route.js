@@ -185,7 +185,68 @@ async function buscarMetMuseum(query) {
 }
 
 // ---------------------------------------------------------------------------
-// Fonte 4: Smithsonian Open Access (requer SMITHSONIAN_API_KEY)
+// Fonte 4: Pixabay (requer PIXABAY_API_KEY — gratuito em pixabay.com/api)
+// ---------------------------------------------------------------------------
+async function buscarPixabay(query) {
+  const apiKey = process.env.PIXABAY_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const params = new URLSearchParams({
+      key: apiKey,
+      q: query,
+      image_type: 'photo',
+      safesearch: 'true',
+      per_page: '5',
+      min_width: '600',
+    });
+    const res = await fetch(
+      `https://pixabay.com/api/?${params}`,
+      { signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const hit = data.hits?.[0];
+    if (!hit) return null;
+    const url = hit.largeImageURL || hit.webformatURL;
+    const usuario = hit.user || 'Pixabay';
+    return { url, credito: `${usuario} / Pixabay / Licença Pixabay` };
+  } catch { return null; }
+}
+
+// ---------------------------------------------------------------------------
+// Fonte 5: Google Custom Search Images (requer GOOGLE_API_KEY + GOOGLE_CX)
+// ---------------------------------------------------------------------------
+async function buscarGoogle(query) {
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const cx = process.env.GOOGLE_CX;
+  if (!apiKey || !cx) return null;
+  try {
+    const params = new URLSearchParams({
+      key: apiKey,
+      cx,
+      q: query,
+      searchType: 'image',
+      num: '5',
+      safe: 'active',
+      rights: 'cc_publicdomain|cc_attribute|cc_sharealike',
+    });
+    const res = await fetch(
+      `https://www.googleapis.com/customsearch/v1?${params}`,
+      { signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const item = data.items?.[0];
+    if (!item) return null;
+    const url = item.link;
+    const fonte = item.displayLink || 'Google Images';
+    const titulo = item.title || '';
+    return { url, credito: `${titulo ? titulo + ' / ' : ''}${fonte}` };
+  } catch { return null; }
+}
+
+// ---------------------------------------------------------------------------
+// Fonte 6: Smithsonian Open Access (requer SMITHSONIAN_API_KEY)
 // ---------------------------------------------------------------------------
 async function buscarSmithsonian(query) {
   const apiKey = process.env.SMITHSONIAN_API_KEY;
@@ -269,7 +330,25 @@ export async function POST(request) {
       }
     }
 
-    // 5. Met Museum (com atribuição)
+    // 5. Pixabay (se PIXABAY_API_KEY configurada)
+    for (const q of queries) {
+      const resultado = await buscarPixabay(q);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
+      }
+    }
+
+    // 6. Google Custom Search (se GOOGLE_API_KEY + GOOGLE_CX configurados)
+    for (const q of queries) {
+      const resultado = await buscarGoogle(q);
+      if (resultado) {
+        const img = await baixarImagem(resultado.url);
+        if (img) return Response.json({ found: true, credito: resultado.credito, ...img });
+      }
+    }
+
+    // 7. Met Museum (com atribuição)
     for (const q of queries) {
       const resultado = await buscarMetMuseum(q);
       if (resultado) {
@@ -278,7 +357,7 @@ export async function POST(request) {
       }
     }
 
-    // 6. Smithsonian (se SMITHSONIAN_API_KEY configurada)
+    // 8. Smithsonian (se SMITHSONIAN_API_KEY configurada)
     for (const q of queries) {
       const resultado = await buscarSmithsonian(q);
       if (resultado) {
