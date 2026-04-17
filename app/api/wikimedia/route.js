@@ -72,6 +72,41 @@ function limparHTML(str) {
 }
 
 // ---------------------------------------------------------------------------
+// IBGE Atlas Geográfico Escolar — mapas oficiais do Brasil (domínio público)
+// Prioridade máxima para questões do tipo "mapa" com tema de geografia BR
+// ---------------------------------------------------------------------------
+const IBGE_BASE = 'https://atlasescolar.ibge.gov.br/images/mapas/brasil/1920/';
+
+const IBGE_MAPAS_CURADOS = [
+  { keywords: ['bioma','biomas','vegetacao','vegetação','mata atlantica','cerrado','caatinga','amazonia','pantanal','pampa','mangue'], img: 'pag103.jpg', legenda: 'Biomas do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['vegetacao natural','floresta','flora brasileira'], img: 'pag100.jpg', legenda: 'Vegetação Natural do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['clima','climatico','precipitacao','pluviosidade','semiarido','tropical','equatorial'], img: 'pag98.jpg', legenda: 'Clima do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['temperatura','termico','calor'], img: 'pag88.jpg', legenda: 'Temperatura do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['relevo','altimetria','planalto','planicie','depressao','chapada','serras'], img: 'brasil-relevo-continental-e-fundo-oceanico.jpg', legenda: 'Relevo do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['topografia','perfil topografico'], img: 'brasil-perfil-topografico.jpg', legenda: 'Perfil Topográfico do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['geologia','geologico','formacao geologica','escudo','bacia sedimentar'], img: 'pag97.jpg', legenda: 'Geologia do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['solo','solos','latossolo','argissolo','pedologia'], img: 'pag102_mapa1_v2.jpg', legenda: 'Solos do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['hidrografia','bacia hidrografica','rio','recursos hidricos','aquifero'], img: 'pag105.jpg', legenda: 'Regiões Hidrográficas do Brasil — IBGE Atlas Escolar' },
+  { keywords: ['uso da terra','cobertura do solo','agropecuaria','pastagem','lavoura'], img: 'pag104_v2.jpg', legenda: 'Cobertura e Uso da Terra — IBGE Atlas Escolar' },
+];
+
+function buscarIBGE(descricao, tipo, tema) {
+  if (!['mapa', 'infográfico'].includes(tipo)) return null;
+  const texto = normalizar(`${descricao} ${tema || ''}`);
+  let melhor = null, maiorScore = 0;
+  for (const rec of IBGE_MAPAS_CURADOS) {
+    let score = 0;
+    for (const kw of rec.keywords) {
+      if (texto.includes(normalizar(kw))) score += kw.split(' ').length;
+    }
+    if (score > maiorScore) { maiorScore = score; melhor = rec; }
+  }
+  return maiorScore > 0
+    ? { url: IBGE_BASE + melhor.img, credito: melhor.legenda + ' / Domínio Público' }
+    : null;
+}
+
+// ---------------------------------------------------------------------------
 // Fonte 1: Wikimedia Commons — com extração de licença e autor
 // ---------------------------------------------------------------------------
 async function buscarWikimediaCommons(query, tipo) {
@@ -300,14 +335,21 @@ export async function POST(request) {
   try {
     const { descricao, tipo, tema } = await request.json();
 
-    // 1. Biblioteca curada
+    // 1. IBGE Atlas Escolar (prioridade máxima para mapas de geografia BR)
+    const ibge = buscarIBGE(descricao, tipo, tema);
+    if (ibge) {
+      const img = await baixarImagem(ibge.url);
+      if (img) return Response.json({ found: true, credito: ibge.credito, ...img });
+    }
+
+    // 2. Biblioteca curada (Wikimedia verificado)
     const curado = encontrarCurado(descricao, tipo, tema);
     if (curado) {
       const img = await baixarImagem(curado.url);
       if (img) return Response.json({ found: true, credito: curado.credito, ...img });
     }
 
-    // 2. Gera query de busca via Claude Haiku
+    // 3. Gera query de busca via Claude Haiku
     const searchQuery = await gerarQueryBusca(descricao, tipo, tema);
     const queries = [searchQuery, tema].filter(Boolean);
 
