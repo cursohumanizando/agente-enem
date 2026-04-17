@@ -791,7 +791,7 @@ export default function App() {
           </button>
           {modo === "simulado" && (
             <div style={{ marginLeft:"8px", display:"flex", alignItems:"center", gap:"6px" }}>
-              {[5,10,15].map(n => (
+              {[5,10,15,45].map(n => (
                 <button key={n} className="chip" onClick={() => setQtd(n)}
                   style={qtdSimulado===n ? { borderColor:"var(--accent)", background:"rgba(108,99,255,.15)", color:"var(--accent)" } : {}}>
                   {n} questões
@@ -876,7 +876,7 @@ export default function App() {
 
                     <div style={{ marginTop:"20px", paddingTop:"16px", borderTop:"1px solid var(--border)", display:"flex", alignItems:"center", gap:"12px", flexWrap:"wrap" }}>
                       <div style={{ color:"var(--muted)", fontSize:"13px" }}>Gerar</div>
-                      {[3,5,10,15].map(n => (
+                      {[3,5,10,15,45].map(n => (
                         <button key={n} className="chip" onClick={() => setQtdImport(n)}
                           style={qtdImport===n ? { borderColor:"#ffd166", background:"rgba(255,209,102,.15)", color:"#ffd166" } : {}}>
                           {n} questões
@@ -1045,7 +1045,7 @@ export default function App() {
             </div>
 
             <div style={{ display:"flex", justifyContent:"center", gap:"8px", marginBottom:"28px" }}>
-              {[5,10,15].map(n => (
+              {[5,10,15,45].map(n => (
                 <button key={n} className="chip" onClick={() => setQtd(n)}
                   style={{ padding:"10px 22px", fontSize:"14px", ...(qtdSimulado===n ? { borderColor:"var(--accent)", background:"rgba(108,99,255,.15)", color:"var(--accent)", fontWeight:600 } : {}) }}>
                   {n} questões
