@@ -490,12 +490,39 @@ export default function App() {
     });
   }
 
+  // Converte uma imagem acessível por URL em dataUrl (base64) + dimensões + mimeType
+  async function urlParaDataUrl(url) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const blob = await res.blob();
+      const mimeType = blob.type || 'image/jpeg';
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+      if (!dataUrl) return null;
+      // Extrai dimensões reais da imagem (para calcular ratio no Word)
+      const dims = await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        img.onerror = () => resolve({ width: 600, height: 400 });
+        img.src = dataUrl;
+      });
+      return { dataUrl, mimeType, width: dims.width, height: dims.height };
+    } catch { return null; }
+  }
+
   async function buscarImagensWikimedia(qs) {
     const imgs = {};
     const comVisual = qs.filter(q => q.recursoVisual?.descricao);
     if (comVisual.length === 0) return imgs;
 
-    setLoadingMsg("Buscando imagens no Wikimedia Commons...");
+    const total = comVisual.length;
+    let feitas = 0;
+    setLoadingMsg(`Buscando imagens (0/${total})...`);
 
     await Promise.all(comVisual.map(async (q) => {
       try {
@@ -510,9 +537,22 @@ export default function App() {
         });
         const data = await res.json();
         if (data.found) {
+          // Se veio como URL estática (/imagens/xxx.jpg), converte para base64
+          // + dimensões + mimeType para que o export Word/PDF consiga embutir
+          if (data.url && !data.dataUrl) {
+            const info = await urlParaDataUrl(data.url);
+            if (info) {
+              data.dataUrl = info.dataUrl;
+              data.mimeType = info.mimeType;
+              data.width = info.width;
+              data.height = info.height;
+            }
+          }
           imgs[q.numero] = data;
         }
       } catch (_) {}
+      feitas++;
+      setLoadingMsg(`Buscando imagens (${feitas}/${total})...`);
     }));
 
     return imgs;
