@@ -1,11 +1,47 @@
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
+// Baixa imagem server-side e converte para base64
+// Usado quando o client enviou só url (sem dataUrl)
+async function resolverImagem(wimg, origin) {
+  if (!wimg) return wimg;
+  if (wimg.dataUrl) return wimg; // já em base64
+  if (!wimg.url) return wimg;
+  try {
+    // Se for URL relativa (começa com /), usa o origin do request
+    const absoluteUrl = wimg.url.startsWith('/') ? origin + wimg.url : wimg.url;
+    const res = await fetch(absoluteUrl, {
+      headers: { 'User-Agent': 'AgenteENEM/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return wimg;
+    const mimeType = res.headers.get('content-type') || 'image/jpeg';
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length < 5000) return wimg;
+    return {
+      ...wimg,
+      dataUrl: `data:${mimeType};base64,${buf.toString('base64')}`,
+      mimeType,
+    };
+  } catch {
+    return wimg;
+  }
+}
+
 export async function POST(request) {
   try {
+    const url = new URL(request.url);
+    const origin = url.origin;
     const { questoes, wikiImgs = {} } = await request.json();
-    const docx = await buildDOCX(questoes, wikiImgs);
-    
+
+    // Pre-processa: garante que toda wimg com url tenha dataUrl
+    const wikiImgsResolved = {};
+    for (const [num, wimg] of Object.entries(wikiImgs)) {
+      wikiImgsResolved[num] = await resolverImagem(wimg, origin);
+    }
+
+    const docx = await buildDOCX(questoes, wikiImgsResolved);
+
     return new Response(docx, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -54,8 +90,8 @@ async function buildDOCX(questoes, wikiImgs = {}) {
       const icone = q.recursoVisual.tipo === 'mapa' ? '🗺' : q.recursoVisual.tipo === 'gráfico' ? '📊' : q.recursoVisual.tipo === 'tabela' ? '📋' : q.recursoVisual.tipo === 'charge' ? '🎨' : q.recursoVisual.tipo === 'fotografia' ? '📷' : '📌';
       body += para(icone + ' ' + (q.recursoVisual.tipo || '').toUpperCase(), { bold: true, size: 17, color: '8a6800', spacing: 60 });
       const wimg = wikiImgs[q.numero];
-      if (wimg) {
-        // Imagem encontrada no Wikimedia — embeda como base64
+      if (wimg && wimg.dataUrl && wimg.dataUrl.includes(',')) {
+        // Imagem encontrada — embeda como base64
         const imgPart = wimg.dataUrl.split(',')[1];
         const mimeType = wimg.mimeType || 'image/jpeg';
         const ext = mimeType === 'image/png' ? 'png' : 'jpeg';

@@ -6,54 +6,54 @@ export const dynamic = 'force-dynamic';
 // Prioridade máxima: zero latência, zero timeout, garantido funcionar
 // ---------------------------------------------------------------------------
 const LOCAL_IMAGENS = [
-  // --- Biomas e vegetação ---
-  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue','floresta'], arquivo: 'biomas-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['caatinga','semiarido','sertao','nordeste seco','estiagem'], arquivo: 'caatinga-semiarido.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['amazonia','floresta amazonica','desmatamento'], arquivo: 'desmatamento-amazonia.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['energia eolica','eolica','aerogerador','energia renovavel','vento'], arquivo: 'energia-eolica-brasil.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['mineracao','minerio','ferro','carajas','vale'], arquivo: 'mineracao-carajas.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  // --- Biomas e vegetação (muito frequente no ENEM) ---
+  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue','floresta','ecossistema','fitogeografia','formacao vegetal','dominio morfoclimatico','aberta'], arquivo: 'biomas-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['caatinga','semiarido','sertao','nordeste','seca','estiagem','nordestino','paisagem seca','xerofila','arida'], arquivo: 'caatinga-semiarido.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['amazonia','floresta amazonica','desmatamento','mata virgem','pulmao verde','arco do desmatamento','queimada','fronteira agricola'], arquivo: 'desmatamento-amazonia.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['energia eolica','eolica','aerogerador','energia renovavel','energia alternativa','matriz energetica','vento','parque eolico','sustentabilidade','transicao energetica'], arquivo: 'energia-eolica-brasil.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['mineracao','minerio','ferro','carajas','vale','extrativismo','minerador','mineira','commodity','exportacao mineral','recurso mineral'], arquivo: 'mineracao-carajas.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
 
-  // --- Geografia e população ---
-  { keywords: ['regiao','norte','nordeste','centro-oeste','sudeste','sul','mapa brasil'], arquivo: 'regioes-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['densidade','demografica','populacao','habitantes','distribuicao'], arquivo: 'densidade-demografica-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['anamorfose','cartograma','populacao mundial'], arquivo: 'anamorfose-populacao.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['co2','emissoes','carbono','aquecimento global','efeito estufa'], arquivo: 'emissoes-co2.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  // --- Geografia do Brasil e população ---
+  { keywords: ['regiao','norte','nordeste','centro oeste','sudeste','sul','mapa brasil','divisao regional','regioes brasileiras','regionalizacao','ibge regioes'], arquivo: 'regioes-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['densidade demografica','populacao brasileira','habitantes','distribuicao populacional','concentracao populacional','ecumeno','vazio demografico','litoral','interior'], arquivo: 'densidade-demografica-brasil.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['anamorfose','cartograma','populacao mundial','representacao cartografica','mapa distorcido','proporcao'], arquivo: 'anamorfose-populacao.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['co2','emissoes','carbono','aquecimento global','efeito estufa','mudanca climatica','gases','poluicao atmosferica','aquecimento','clima planeta','crise climatica'], arquivo: 'emissoes-co2.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
 
-  // --- Urbanização e social ---
-  { keywords: ['favela','periferia','moradia precaria','habitacao','rocinha'], arquivo: 'favela-moradia.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['sao paulo','metropole','megatropole','grande cidade','urbanizacao'], arquivo: 'sao-paulo-metropole.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
-  { keywords: ['desigualdade','gini','distribuicao renda','pobreza','riqueza'], arquivo: 'desigualdade-gini.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['globalizacao','comercio internacional','multinacional','neoliberalismo'], arquivo: 'globalizacao.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
+  // --- Urbanização e questões sociais ---
+  { keywords: ['favela','periferia','moradia','habitacao','rocinha','precariedade','comunidade','segregacao urbana','desigualdade urbana','auto construcao'], arquivo: 'favela-moradia.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['sao paulo','metropole','megatropole','cidade','urbanizacao','urbano','predios','arranha ceu','centro urbano','aglomeracao urbana','conurbacao','megalopole','area metropolitana'], arquivo: 'sao-paulo-metropole.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
+  { keywords: ['desigualdade','gini','distribuicao renda','pobreza','riqueza','concentracao renda','indice gini','desigualdade social','classe social','piramide social'], arquivo: 'desigualdade-gini.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['globalizacao','comercio internacional','multinacional','neoliberalismo','mundializacao','integracao mundial','fluxo global','capital globalizado','mercado mundial','transnacional'], arquivo: 'globalizacao.jpg', credito: 'Wikimedia Commons / CC BY-SA 2.0' },
 
   // --- História do Brasil ---
-  { keywords: ['independencia','grito ipiranga','dom pedro','sete de setembro'], arquivo: 'independencia-brasil.jpg', credito: 'Pedro Américo / Wikimedia Commons / Domínio Público' },
-  { keywords: ['proclamacao republica','marechal deodoro','republica velha','1889'], arquivo: 'proclamacao-republica.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['escravidao','escravo','abolicao','trafico negreiro','lei aurea','navio negreiro'], arquivo: 'escravidao-navio.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['quilombo','palmares','zumbi','resistencia negra','quilombola'], arquivo: 'quilombo-zumbi.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['getulio vargas','estado novo','populismo','trabalhismo','era vargas'], arquivo: 'getulio-vargas.jpg', credito: 'Arquivo Nacional / Wikimedia Commons / Domínio Público' },
-  { keywords: ['ditadura','censura','regime militar','1964','ato institucional','repressao'], arquivo: 'ditadura-militar.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['diretas ja','redemocratizacao','abertura politica','eleicao direta'], arquivo: 'diretas-ja.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['mst','reforma agraria','sem terra','latifundio','assentamento'], arquivo: 'mst-reforma-agraria.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['independencia','grito ipiranga','dom pedro','sete de setembro','1822','proclamacao independencia','separacao portugal','brasil imperio','pedro primeiro'], arquivo: 'independencia-brasil.jpg', credito: 'Pedro Américo / Wikimedia Commons / Domínio Público' },
+  { keywords: ['proclamacao republica','marechal deodoro','republica velha','1889','fim monarquia','oligarquica','cafe com leite','primeira republica'], arquivo: 'proclamacao-republica.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['escravidao','escravo','abolicao','trafico negreiro','lei aurea','navio negreiro','escravizado','diaspora africana','africano brasil','mao de obra escrava','tumbeiro'], arquivo: 'escravidao-navio.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['quilombo','palmares','zumbi','resistencia negra','quilombola','liberdade negra','afrodescendente','ganga zumba','liderança negra','heroi negro'], arquivo: 'quilombo-zumbi.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['getulio vargas','estado novo','populismo','trabalhismo','era vargas','1930','revolucao de 30','pai dos pobres','clt','trabalhador'], arquivo: 'getulio-vargas.jpg', credito: 'Arquivo Nacional / Wikimedia Commons / Domínio Público' },
+  { keywords: ['ditadura','censura','regime militar','1964','ato institucional','repressao','anos de chumbo','militares brasil','golpe militar','ai 5','tortura'], arquivo: 'ditadura-militar.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['diretas ja','redemocratizacao','abertura politica','eleicao direta','movimento civil','nova republica','tancredo','sarney','1984'], arquivo: 'diretas-ja.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['mst','reforma agraria','sem terra','latifundio','assentamento','movimento social campo','luta pela terra','concentracao fundiaria','trabalhador rural','acampamento'], arquivo: 'mst-reforma-agraria.jpg', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
 
   // --- História mundial ---
-  { keywords: ['revolucao industrial','operario','fabrica','capitalismo industrial','chamine','burgues'], arquivo: 'revolucao-industrial.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['primeira guerra','trincheira','grande guerra','1914','1918'], arquivo: 'primeira-guerra-trincheira.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['segunda guerra','holocausto','nazismo','fascismo','hitler','guerra mundial'], arquivo: 'segunda-guerra-holocausto.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['revolucao francesa','guilhotina','bastilha','iluminismo','queda da bastilha'], arquivo: 'revolucao-francesa.jpg', credito: 'Wikimedia Commons / Domínio Público' },
-  { keywords: ['colonialismo','imperialismo','africa','neocolonialismo','partilha africa'], arquivo: 'colonialismo-africa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
-  { keywords: ['guerra fria','cortina de ferro','urss','capitalismo socialismo','bipolaridade'], arquivo: 'guerra-fria-mapa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['revolucao industrial','operario','fabrica','capitalismo industrial','chamine','burgues','industrializacao','modo producao','proletariado','maquinofatura','taylorismo','fordismo'], arquivo: 'revolucao-industrial.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['primeira guerra','trincheira','grande guerra','1914','1918','primeira guerra mundial','imperialismo guerra','nacionalismo guerra','tratado versalhes'], arquivo: 'primeira-guerra-trincheira.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['segunda guerra','holocausto','nazismo','fascismo','hitler','guerra mundial','campo concentracao','auschwitz','judeu','genocidio','totalitarismo'], arquivo: 'segunda-guerra-holocausto.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['revolucao francesa','guilhotina','bastilha','iluminismo','queda da bastilha','1789','liberdade igualdade fraternidade','jacobinos','antigo regime','luis xvi'], arquivo: 'revolucao-francesa.jpg', credito: 'Wikimedia Commons / Domínio Público' },
+  { keywords: ['colonialismo','imperialismo','africa','neocolonialismo','partilha africa','colonia','europeu africa','conferencia berlim','dominacao colonial','scramble africa'], arquivo: 'colonialismo-africa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
+  { keywords: ['guerra fria','cortina de ferro','urss','capitalismo socialismo','bipolaridade','otan','varsovia','muro berlim','kennedy','geopolitica','eua urss'], arquivo: 'guerra-fria-mapa.png', credito: 'Wikimedia Commons / CC BY-SA 3.0' },
 
   // --- IBGE Atlas Escolar (mapas oficiais do Brasil) ---
-  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue'], arquivo: 'ibge-biomas.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['vegetacao natural','flora brasileira','cobertura vegetal'], arquivo: 'ibge-vegetacao.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['clima','climatico','precipitacao','pluviosidade','semiarido','tropical','equatorial'], arquivo: 'ibge-clima.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['temperatura','termico','calor','frio'], arquivo: 'ibge-temperatura.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['relevo','altimetria','planalto','planicie','depressao','chapada','serras'], arquivo: 'ibge-relevo.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['topografia','perfil topografico'], arquivo: 'ibge-topografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['geologia','geologico','formacao geologica','escudo','bacia sedimentar'], arquivo: 'ibge-geologia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['solo','solos','latossolo','argissolo','pedologia'], arquivo: 'ibge-solos.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['hidrografia','bacia hidrografica','rio','recursos hidricos','aquifero'], arquivo: 'ibge-hidrografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
-  { keywords: ['uso da terra','cobertura do solo','agropecuaria','pastagem','lavoura'], arquivo: 'ibge-uso-terra.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['bioma','biomas','vegetacao','cerrado','caatinga','mata atlantica','pantanal','pampa','mangue','amazonia','ecossistema','formacao vegetal'], arquivo: 'ibge-biomas.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['vegetacao natural','flora brasileira','cobertura vegetal','tipos vegetacao'], arquivo: 'ibge-vegetacao.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['clima','climatico','precipitacao','pluviosidade','semiarido','tropical','equatorial','clima brasil','zonas climaticas','chuva'], arquivo: 'ibge-clima.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['temperatura','termico','calor','frio','isotermica','isoterma','media termica'], arquivo: 'ibge-temperatura.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['relevo','altimetria','planalto','planicie','depressao','chapada','serras','elevacao','forma relevo','unidade relevo'], arquivo: 'ibge-relevo.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['topografia','perfil topografico','altitude','cotas','isolinhas'], arquivo: 'ibge-topografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['geologia','geologico','formacao geologica','escudo','bacia sedimentar','cristalino','rochas','estrutura geologica','provincia geologica'], arquivo: 'ibge-geologia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['solo','solos','latossolo','argissolo','pedologia','tipo solo','fertilidade','terra roxa'], arquivo: 'ibge-solos.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['hidrografia','bacia hidrografica','rio','recursos hidricos','aquifero','bacia','agua','afluente','drenagem'], arquivo: 'ibge-hidrografia.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
+  { keywords: ['uso da terra','cobertura do solo','agropecuaria','pastagem','lavoura','agricultura','agronegocio','producao agricola','uso solo'], arquivo: 'ibge-uso-terra.jpg', credito: 'IBGE Atlas Escolar / Domínio Público', tipoRestrito: ['mapa','infográfico'] },
 ];
 
 function encontrarLocal(descricao, tipo, tema) {

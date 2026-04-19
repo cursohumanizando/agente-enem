@@ -1,10 +1,38 @@
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
+// Converte url local em dataUrl (base64) para embutir no HTML do PDF
+async function resolverImagem(wimg, origin) {
+  if (!wimg) return wimg;
+  if (wimg.dataUrl) return wimg;
+  if (!wimg.url) return wimg;
+  try {
+    const absoluteUrl = wimg.url.startsWith('/') ? origin + wimg.url : wimg.url;
+    const res = await fetch(absoluteUrl, {
+      headers: { 'User-Agent': 'AgenteENEM/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return wimg;
+    const mimeType = res.headers.get('content-type') || 'image/jpeg';
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length < 5000) return wimg;
+    return { ...wimg, dataUrl: `data:${mimeType};base64,${buf.toString('base64')}`, mimeType };
+  } catch { return wimg; }
+}
+
 export async function POST(request) {
   try {
+    const reqUrl = new URL(request.url);
+    const origin = reqUrl.origin;
     const { questoes, wikiImgs = {} } = await request.json();
-    const html = buildHTML(questoes, wikiImgs);
+
+    // Resolve todas as imagens para base64 (garante funcionamento no window popup)
+    const wikiImgsResolved = {};
+    for (const [num, wimg] of Object.entries(wikiImgs)) {
+      wikiImgsResolved[num] = await resolverImagem(wimg, origin);
+    }
+
+    const html = buildHTML(questoes, wikiImgsResolved);
     return new Response(html, {
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
